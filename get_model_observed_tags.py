@@ -92,8 +92,8 @@ def main(args):
     model = 'ccSklearnLogitEnsemble'
 
     try:
-        #checkout_model_repos(parsed_args.RELEASE)
-        #get_model_from_s3(model)
+        checkout_model_repos(release)
+        get_model_from_s3(model)
         run_and_query_server(model, release, baseline)
 
     except Exception as e:
