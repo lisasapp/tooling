@@ -18,7 +18,7 @@ def parse_args(args):
     cli.add_logging_to_parser(aparser)
 
     aparser.add_argument('RELEASE', default=None, type=str, help='Name of the model release')
-    #aparser.add_argument('BASELINE', default=None, type=str, help='Date of the baseline set to use')
+    aparser.add_argument('BASELINE', default=None, type=str, help='Date of the baseline set to use')
 
     return aparser.parse_args()
 
@@ -68,27 +68,30 @@ def start_server(modelname):
     #                 '-l', 'DEBUG'])
 
 
-def query_server(release, baseline):
+def query_server(uniquekey):
+    final_file = uniquekey + '_observed.csv'
     subprocess.call(['pythona',
                      config.env_vars['ASAPP_SRS_ROOT'] + '/tools/hier_server_query.py',
                      '--source', 'comcast_baseline',
                      '--host', 'localhost',
                      '--protocol', 'http',
                      '--port', '9999',
-                     release + '_' + baseline + '.csv'])
+                     final_file])
 
 
 def run_and_query_server(modelname, release, baseline):
     thread = threading.Thread(target=start_server,args=(modelname,))
     thread.start()
-    query_server(release, baseline)
+
+    uniquekey = release + '_' + baseline
+    query_server(uniquekey)
     stop_hiernado()
 
 
-def main(args):
+def run(args):
     parsed_args = parse_args(args)
     release = parsed_args.RELEASE
-    baseline = 'baseline'
+    baseline = parsed_args.BASELINE
     model = 'ccSklearnLogitEnsemble'
 
     try:
@@ -104,4 +107,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(run(sys.argv[1:]))
