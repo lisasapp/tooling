@@ -25,7 +25,7 @@ class GenerateUniformSampleForClient:
         self._client = self._config['client']
         self._start_date = self._config['start_date']
         self._end_date = self._config['end_date']
-        self._working_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
+        self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
     def run(self):
         self._sample_production_logs()
@@ -40,7 +40,7 @@ class GenerateUniformSampleForClient:
             os.path.join(ASAPP_PRODML_ROOT, 'tools', 'harvest_cc_logs.py'),
             '--dt_from', self._start_date + 'T0:0:0',
             '--dt_to', self._end_date + 'T0:0:0',
-            '--output', os.path.join(self._working_directory, 'full-sample.csv'),
+            '--output', os.path.join(self._output_directory, 'full-sample.csv'),
             '--no-collapse'
         ])
 
@@ -51,23 +51,23 @@ class GenerateUniformSampleForClient:
             '--consolidate',
             '--sample-size', '450',
             '--custguid-blacklist', 'comcastblacklist:20170804',
-            'local://' + os.path.join(self._working_directory, 'full-sample.csv'),
-            os.path.join(self._working_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')
+            'local://' + os.path.join(self._output_directory, 'full-sample.csv'),
+            os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')
         ])
 
     def _autotag_uniform_sample(self):
         subprocess.run([
             sys.executable,
             os.path.join(ASAPP_MLENG_ROOT, 'tools', 'autotagger.py'),
-            '--output-dir', self._working_directory,
+            '--output-dir', self._output_directory,
             'comcast_baseline,comcast_devtest,comcast_training,ccsrsprodweb',
-            'local://' + os.path.join(self._working_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')
+            'local://' + os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')
         ])
 
     def _push_uniform_sample_to_s3(self):
         subprocess.run([
             'corpora', 'push',
-            '--filepath', os.path.join(self._working_directory, f'ccsrsprod-week{self._start_date}uniform-450_auto.csv'),
+            '--filepath', os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450_auto.csv'),
             '--bucket', 'asapp-corpora-tagging',
             'condorsrssampling:week{self._start_date}uniform450'
         ])
