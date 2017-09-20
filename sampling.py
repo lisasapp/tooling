@@ -43,3 +43,15 @@ class GenerateUniformSampleForClient:
             '--output', os.path.join(log_directory, 'full-sample.csv'),
             '--no-collapse'
         ])
+
+    def _take_uniform_sample(self):
+        log_directory = os.path.join(ASAPP_ROOT, 'data', self.client, self.start_date)
+        subprocess.run([
+            sys.executable,
+            os.path.join(ASAPP_PRODML_ROOT, 'tools', 'hier_sample_logs.py'),
+            '--consolidate',
+            '--sample-size', '450',
+            '--custguid-blacklist', 'comcastblacklist:20170804',
+            'local://' + os.path.join(log_directory, 'full-sample.csv'),
+            os.path.join(log_directory, f'ccsrsprod-week{self.start_date}uniform-450.csv')
+        ])
