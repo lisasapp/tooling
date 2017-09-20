@@ -27,11 +27,11 @@ class GenerateUniformSampleForClient:
         self.end_date = self.config['end_date']
 
     def run(self):
-        # self._sample_production_logs()
-        # self._take_uniform_sample()
-        # self._autotag_uniform_sample()
-        # self._push_uniform_sample_to_s3()
-        # self._print_next_steps()
+        self._sample_production_logs()
+        self._take_uniform_sample()
+        self._autotag_uniform_sample()
+        self._push_uniform_sample_to_s3()
+        self._print_next_steps()
 
     def _sample_production_logs(self):
         log_directory = os.path.join(ASAPP_ROOT, 'data', self.client, self.start_date)
@@ -75,3 +75,14 @@ class GenerateUniformSampleForClient:
             '--bucket', 'asapp-corpora-tagging',
             'condorsrssampling:week{self.start_date}uniform450'
         ])
+
+    def _print_next_steps(self):
+        print(
+f"""
+\nAs a final step, please perform the following:
+    1. Open ccsrsprod-week{self.start_date}uniform-450_auto.csv in Excel.
+    2. Remove all columns except: `tag`, `observed`, `weight`, `text`.
+    3. Save result as {self.client}{self.start_date}.xslx.
+    4. Email this file to {self.client.capitalize()}.
+"""
+        )
