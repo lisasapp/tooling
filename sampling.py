@@ -29,7 +29,7 @@ class GenerateUniformSampleForClient:
     def run(self):
         # self._sample_production_logs()
         # self._take_uniform_sample()
-        self._autotag_uniform_sample()
+        # self._autotag_uniform_sample()
         # self._push_uniform_sample_to_s3()
         # self._print_next_steps()
 
@@ -65,4 +65,13 @@ class GenerateUniformSampleForClient:
             '--output-dir', log_directory,
             'comcast_baseline,comcast_devtest,comcast_training,ccsrsprodweb',
             'local://' + os.path.join(log_directory, f'ccsrsprod-week{self.start_date}uniform-450.csv')
+        ])
+
+    def _push_uniform_sample_to_s3(self):
+        log_directory = os.path.join(ASAPP_ROOT, 'data', self.client, self.start_date)
+        subprocess.run([
+            'corpora', 'push',
+            '--filepath', os.path.join(log_directory, f'ccsrsprod-week{self.start_date}uniform-450_auto.csv'),
+            '--bucket', 'asapp-corpora-tagging',
+            'condorsrssampling:week{self.start_date}uniform450'
         ])
