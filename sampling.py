@@ -8,6 +8,7 @@ from ruamel import yaml
 DEFAULT_CONFIG_PATH = 'config.yml'
 ASAPP_ROOT = os.environ['ASAPP_ROOT']
 ASAPP_PRODML_ROOT = os.environ['ASAPP_PRODML_ROOT']
+ASAPP_MLENG_ROOT = os.environ['ASAPP_MLENG_ROOT']
 
 
 class GenerateUniformSampleForClient:
@@ -27,8 +28,8 @@ class GenerateUniformSampleForClient:
 
     def run(self):
         # self._sample_production_logs()
-        self._take_uniform_sample()
-        # self._autotag_uniform_sample()
+        # self._take_uniform_sample()
+        self._autotag_uniform_sample()
         # self._push_uniform_sample_to_s3()
         # self._print_next_steps()
 
@@ -54,4 +55,14 @@ class GenerateUniformSampleForClient:
             '--custguid-blacklist', 'comcastblacklist:20170804',
             'local://' + os.path.join(log_directory, 'full-sample.csv'),
             os.path.join(log_directory, f'ccsrsprod-week{self.start_date}uniform-450.csv')
+        ])
+
+    def _autotag_uniform_sample(self):
+        log_directory = os.path.join(ASAPP_ROOT, 'data', self.client, self.start_date)
+        subprocess.run([
+            sys.executable,
+            os.path.join(ASAPP_MLENG_ROOT, 'tools', 'autotagger.py'),
+            '--output-dir', log_directory,
+            'comcast_baseline,comcast_devtest,comcast_training,ccsrsprodweb',
+            'local://' + os.path.join(log_directory, f'ccsrsprod-week{self.start_date}uniform-450.csv')
         ])
