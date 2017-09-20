@@ -3,8 +3,8 @@
 # can create a python script to wrap this bash script that wraps python scripts..
 BASELINE='20170828'
 #RELEASE_SETS=('ComcastSRS-2.18.0' 'ComcastSRS-2.17.0' 'ComcastSRS-2.16.8' 'ComcastSRS-2.16.2' 'ComcastSRS-2.15.0' 'ComcastSRS-2.14.1' 'ComcastSRS-2.9.2' 'ComcastSRS-2.8.3' 'ComcastSRS-2.7.5' 'ComcastSRS-2.6.4')
-#RELEASE_SETS=('ComcastSRS-2.18.0' 'ComcastSRS-2.14.1')
-RELEASE_SETS=('ComcastSRS-2.18.0')
+RELEASE_SETS=('ComcastSRS-2.18.0' 'ComcastSRS-2.16.8')
+#RELEASE_SETS=('ComcastSRS-2.14.1')
 
 checkitout(){
     pushd $ASAPP_PRODML_ROOT
@@ -12,7 +12,7 @@ checkitout(){
     popd
     pushd $ASAPP_SRS_ROOT
     #git checkout $1
-    git checkout baselinereport
+    git checkout baselinereport # need to be able to get different versions of asapp-srs for old versions
     popd
     pushd $ASAPP_COMCAST_SRS_ROOT
     git checkout $1

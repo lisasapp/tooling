@@ -15,7 +15,7 @@ def parse_args(args):
     return aparser.parse_args()
 
 
-def get_metrics(observedfile, level='1*'):
+def get_observered_metrics(observedfile, level='1*'):
     process = Popen(['pythona',
                     '-m', 'asapp.metrics',
                     '--source', 'comcast_baseline',
@@ -29,7 +29,6 @@ def get_metrics(observedfile, level='1*'):
                    stderr=PIPE)
     output,err = process.communicate()
     return output
-
 
 def write_xls(output, baseline, title):
     # write to file -> later change to excel
@@ -52,10 +51,10 @@ def run(args):
 
     uniquekey = release + '_' + baseline
     observed = uniquekey + '_observed.csv'
-    output = get_metrics(observed)
+    output = get_observered_metrics(observed)
     write_xls(output, baseline, uniquekey)
 
-    output_4level = get_metrics(observed, '4*')
+    output_4level = get_observered_metrics(observed, '4*')
     write_xls(output_4level, baseline, uniquekey + '4')
 
 if __name__ == '__main__':

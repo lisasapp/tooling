@@ -1,0 +1,10 @@
+metrics:
+  client: condor
+  metric:
+    - baseline: 20170920
+      releases:
+        - release: ComcastSRS-2.19.0
+        - release: ComcastSRS-2.18.0
+        - release: ComcastSRS-2.17.0
+  output_dir: /Users/lisa/ASAPPinc/data
+report:

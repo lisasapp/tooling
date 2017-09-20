@@ -13,6 +13,8 @@ from run_hierserver import run_hiernado,stop_hiernado,parser as run_hiernado_par
 from asapp.common import log, cli
 from asapp.common import config
 
+CLIENT_NAME = 'COMCAST'
+
 def parse_args(args):
     aparser = argparse.ArgumentParser(description=__doc__)
     cli.add_logging_to_parser(aparser)
@@ -33,7 +35,7 @@ def checkout_model_repos(release):
     gmleng = Repo(config.env_vars['ASAPP_MLENG_ROOT'])
     gmleng.git.checkout(release)
 
-    gcomcast = Repo(config.env_vars['ASAPP_COMCAST_SRS_ROOT'])
+    gcomcast = Repo(config.env_vars['ASAPP_' + CLIENT_NAME + '_SRS_ROOT'])
     gcomcast.git.checkout(release)
 
     # get the business
@@ -50,9 +52,9 @@ def get_model_from_s3(modelname):
 
 def start_server(modelname):
     inputArgs = [
-        '--routing-json', config.env_vars['ASAPP_COMCAST_SRS_ROOT'] + '/routing.json',
+        '--routing-json', config.env_vars['ASAPP_' + CLIENT_NAME + '_SRS_ROOT'] + '/routing.json',
         '--model-name', modelname,
-        '--business-logic', config.env_vars['ASAPP_COMCAST_SRS_ROOT'] + '/business_logic',
+        '--business-logic', config.env_vars['ASAPP_' + CLIENT_NAME + '_SRS_ROOT'] + '/business_logic',
         '-p', '9999',
         '-l', 'DEBUG'
     ]
