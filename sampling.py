@@ -35,7 +35,6 @@ class GenerateUniformSampleForClient:
         self._print_next_steps()
 
     def _sample_production_logs(self):
-        subprocess.run(['cd', self._working_directory])
         subprocess.run([
             sys.executable,
             os.path.join(ASAPP_PRODML_ROOT, 'tools', 'harvest_cc_logs.py'),
