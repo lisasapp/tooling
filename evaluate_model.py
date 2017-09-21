@@ -1,6 +1,6 @@
 import argparse
 import os
-import sys
+
 from subprocess import Popen, PIPE
 from asapp.common import cli
 from asapp.common import config
@@ -44,18 +44,19 @@ def write_xls(output, baseline, title):
     file.write(output)
     file.close()
 
-def run(args):
-    parsed_args = parse_args(args)
-    release = parsed_args.RELEASE
-    baseline = parsed_args.BASELINE
+def run(release, baseline):
+    #parsed_args = parse_args(args)
+    #release = parsed_args.RELEASE
+    #baseline = parsed_args.BASELINE
 
     uniquekey = release + '_' + baseline
     observed = uniquekey + '_observed.csv'
+
+    print("evaluate taglevel1")
     output = get_observered_metrics(observed)
     write_xls(output, baseline, uniquekey)
 
+    print("evaluate taglevel4")
     output_4level = get_observered_metrics(observed, '4*')
-    write_xls(output_4level, baseline, uniquekey + '4')
+    write_xls(output_4level, baseline, uniquekey + '_taglevel4')
 
-if __name__ == '__main__':
-    sys.exit(run(sys.argv[1:]))
