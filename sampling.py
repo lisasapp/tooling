@@ -2,10 +2,7 @@ import os
 import subprocess
 import sys
 
-from ruamel import yaml
 
-
-DEFAULT_CONFIG_PATH = 'config.yml'
 ASAPP_ROOT = os.environ['ASAPP_ROOT']
 ASAPP_PRODML_ROOT = os.environ['ASAPP_PRODML_ROOT']
 ASAPP_MLENG_ROOT = os.environ['ASAPP_MLENG_ROOT']
@@ -19,9 +16,8 @@ class GenerateUniformSampleForClient:
     # TODO: Explain these steps in detail.
     """
 
-    def __init__(self, config_path=DEFAULT_CONFIG_PATH):
-        config_file = open(config_path, 'rb')
-        self._config = yaml.safe_load(config_file)['sampling']
+    def __init__(self, config):
+        self._config = config['sampling']
         self._client = self._config['client']
         self._start_date = self._config['start_date']
         self._end_date = self._config['end_date']
