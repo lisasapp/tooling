@@ -1,0 +1,6 @@
+import asapp.common.config
+
+
+ASAPP_ROOT = config.env_vars['ASAPP_ROOT']
+ASAPP_PRODML_ROOT = config.env_vars['ASAPP_PRODML_ROOT']
+ASAPP_MLENG_ROOT = config.env_vars['ASAPP_MLENG_ROOT']

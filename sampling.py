@@ -3,11 +3,6 @@ import subprocess
 import sys
 
 
-ASAPP_ROOT = os.environ['ASAPP_ROOT']
-ASAPP_PRODML_ROOT = os.environ['ASAPP_PRODML_ROOT']
-ASAPP_MLENG_ROOT = os.environ['ASAPP_MLENG_ROOT']
-
-
 class GenerateUniformSampleForClient:
 
     """
