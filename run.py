@@ -3,7 +3,7 @@ from ruamel import yaml
 from sampling import GenerateUniformSampleForClient
 
 
-DEFAULT_CONFIG_PATH = 'config.yml'
+DEFAULT_CONFIG_PATH = 'config.yaml'
 
 
 if __name__ == '__main__':
