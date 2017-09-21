@@ -1,4 +1,4 @@
-import asapp.common.config
+from asapp.common import config
 
 
 ASAPP_ROOT = config.env_vars['ASAPP_ROOT']

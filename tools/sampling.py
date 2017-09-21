@@ -2,6 +2,8 @@ import os
 import subprocess
 import sys
 
+from tools import ASAPP_ROOT, ASAPP_MLENG_ROOT, ASAPP_MLENG_ROOT
+
 
 class GenerateUniformSampleForClient:
 
