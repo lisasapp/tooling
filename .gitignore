@@ -99,3 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Config file
+config.yml
+
+# md5skiplist
+md5skiplist.yaml
