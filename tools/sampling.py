@@ -10,7 +10,15 @@ class GenerateUniformSampleForClient:
     """
     Generate a uniform sample of SRS data for client.
 
-    # TODO: Explain these steps in detail.
+    This class performs five steps to the above effect:
+
+    1. Take all records from SRS production logs for the specified
+    ("start_date", "end_date") date range.
+    2. Take a uniform sample of the results of the previous step.
+    3. Auto-tag the uniform sample.
+    4. Push the result of the previous step to S3, via corpora.
+    5. Print the final steps to take before sending the autotagged,
+    uniform sample to client.
     """
 
     def __init__(self, config):
