@@ -5,6 +5,8 @@ from subprocess import Popen, PIPE
 from asapp.common import cli
 from asapp.common import config
 
+from workflow.paths import *
+
 def parse_args(args):
     aparser = argparse.ArgumentParser(description=__doc__)
     cli.add_logging_to_parser(aparser)
@@ -20,7 +22,7 @@ def get_observered_metrics(observedfile, level='1*'):
                     '-m', 'asapp.metrics',
                     '--source', 'comcast_baseline',
                     '--observed-data', 'local://'+observedfile,
-                    '--business-logic', config.env_vars['ASAPP_COMCAST_SRS_ROOT'] + '/business_logic',
+                    '--business-logic', ASAPP_COMCAST_SRS_ROOT + '/business_logic',
                     '--metrics', 'acc,prec,recall',
                     '--filter-classes', 'V,_*',
                     '--taglevel', level
