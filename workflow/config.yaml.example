@@ -2,6 +2,6 @@
 # "config.yml" and replace the values at will.
 
 sampling:
-  start_date: '20001231'
-  end_date: '20010106' # typically one week after `start_date`
-  client: 'condor'
+  start_date: 20001231
+  end_date: 20010106 # typically one week after `start_date`
+  client: condor

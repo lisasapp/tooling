@@ -13,6 +13,8 @@ import traceback
 from asapp.common import log, cli
 from asapp.common import config
 
+from paths import *
+
 def parse_args(args):
     aparser = argparse.ArgumentParser(description=__doc__)
     cli.add_logging_to_parser(aparser)
@@ -27,21 +29,11 @@ def get_model_from_s3(modelname):
     subprocess.call(['model_stash', '--bucket', 'asapp-models-dev','get', modelname])
 
 def start_server(modelname, queue):
-    #inputArgs = [
-    #    '--routing-json', config.env_vars['ASAPP_' + CLIENT_NAME + '_SRS_ROOT'] + '/routing.json',
-    #    '--model-name', modelname,
-    #    '--business-logic', config.env_vars['ASAPP_' + CLIENT_NAME + '_SRS_ROOT'] + '/business_logic',
-    #    '-p', '9999',
-    #    '-l', 'DEBUG'
-    #]
-    #aparser = run_hiernado_parser()
-    #args = aparser.parse_args(inputArgs)
-    #run_hiernado(args)
     server = subprocess.Popen(['pythona',
-                     config.env_vars['ASAPP_SRS_ROOT'] + '/run_hierserver.py',
-                     '--routing-json', config.env_vars['ASAPP_COMCAST_SRS_ROOT'] + '/routing.json',
+                     ASAPP_SRS_ROOT + '/run_hierserver.py',
+                     '--routing-json', ASAPP_COMCAST_SRS_ROOT + '/routing.json',
                      '--model-name', modelname,
-                     '--business-logic', config.env_vars['ASAPP_COMCAST_SRS_ROOT'] + '/business_logic',
+                     '--business-logic', ASAPP_COMCAST_SRS_ROOT + '/business_logic',
                      '-p', '9999',
                      '-l', 'DEBUG'])
     queue.put(server)
@@ -49,7 +41,7 @@ def start_server(modelname, queue):
 def query_server(uniquekey):
     final_file = uniquekey + '_observed.csv'
     subprocess.run(['pythona',
-                     config.env_vars['ASAPP_SRS_ROOT'] + '/tools/hier_server_query.py',
+                    ASAPP_SRS_ROOT + '/tools/hier_server_query.py',
                      '--source', 'comcast_baseline',
                      '--host', 'localhost',
                      '--protocol', 'http',
