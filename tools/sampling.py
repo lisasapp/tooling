@@ -23,19 +23,19 @@ class GenerateUniformSampleForClient(BaseTool):
     """
 
     def __init__(self, config):
-        self._config = config['sampling']
-        self._client = self._config['client']
-        self._start_date = self._config['start_date']
-        self._end_date = self._config['end_date']
+        self._config = config['tools']['sampling']
+        self._client = config['client']
+        self._start_date = config['start_date']
+        self._end_date = config['end_date']
         self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
     def run(self):
         self._validate_input()
 
-        self._sample_production_logs()
-        self._take_uniform_sample()
-        self._autotag_uniform_sample()
-        self._push_uniform_sample_to_s3()
+        # self._sample_production_logs()
+        # self._take_uniform_sample()
+        # self._autotag_uniform_sample()
+        # self._push_uniform_sample_to_s3()
         self._print_next_steps()
 
     def _validate_input(self):
