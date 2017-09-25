@@ -3,9 +3,10 @@ import subprocess
 import sys
 
 from tools import ASAPP_ROOT, ASAPP_MLENG_ROOT, ASAPP_PRODML_ROOT
+from tools.base import BaseTool
 
 
-class GenerateUniformSampleForClient:
+class GenerateUniformSampleForClient(BaseTool):
 
     """
     Generate a uniform sample of SRS data for client.
@@ -29,11 +30,20 @@ class GenerateUniformSampleForClient:
         self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
     def run(self):
+        self._validate_input()
+
         self._sample_production_logs()
         self._take_uniform_sample()
         self._autotag_uniform_sample()
         self._push_uniform_sample_to_s3()
         self._print_next_steps()
+
+    def _validate_input(self):
+        """
+        This class has no ostensible "input". As such, we simply `pass` during
+        validation.
+        """
+        pass
 
     def _sample_production_logs(self):
         subprocess.run([
