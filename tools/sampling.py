@@ -31,11 +31,13 @@ class GenerateUniformSampleForClient(BaseTool):
 
     def run(self):
         self._validate_input()
+        self._run_steps()
 
-        # self._sample_production_logs()
-        # self._take_uniform_sample()
-        # self._autotag_uniform_sample()
-        # self._push_uniform_sample_to_s3()
+    def _run_steps(self):
+        self._sample_production_logs()
+        self._take_uniform_sample()
+        self._autotag_uniform_sample()
+        self._push_uniform_sample_to_s3()
         self._print_next_steps()
 
     def _validate_input(self):

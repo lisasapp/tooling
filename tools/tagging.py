@@ -22,6 +22,10 @@ class ProcessTagsThatClientReturns:
 
     def run(self):
         self._validate_input()
+        self._run_steps()
+
+    def _run_steps(self):
+        pass
 
     def _validate_input(self):
         input_file_header = set(pd.read_csv(self.input_file).columns)
