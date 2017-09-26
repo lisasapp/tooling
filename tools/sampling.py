@@ -3,6 +3,7 @@ import subprocess
 import sys
 
 from tools import ASAPP_ROOT, ASAPP_MLENG_ROOT, ASAPP_PRODML_ROOT
+from tools import CLIENT_FULL_NAMES
 from tools.base import BaseTool
 
 
@@ -95,7 +96,7 @@ f"""
 \nAs a final step, please perform the following:
     1. Open ccsrsprod-week{self._start_date}uniform-450_auto.csv in Excel.
     2. Remove all columns except: `tag`, `observed`, `weight`, `text`.
-    3. Save result as {self._client}{self._start_date}.xslx.
+    3. Save result as {CLIENT_FULL_NAMES[self._client]}{self._start_date}.xslx.
     4. Email this file to {self._client.capitalize()}.
 """
         )
