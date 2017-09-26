@@ -8,7 +8,7 @@ import pandas as pd
 
 class ProcessTagsThatClientReturns:
 
-    EXPECTED_INPUT_FILE_HEADER = ['text', 'tag', 'notes']
+    EXPECTED_INPUT_FILE_COLUMNS = ['text', 'tag', 'notes']
 
     def __init__(self, config):
         self._config = config['tools']['tagging']
@@ -32,8 +32,9 @@ class ProcessTagsThatClientReturns:
         self._overwrite_uniform_sample_currently_in_s3()
 
     def _validate_input(self):
-        input_file_header = set(pd.read_csv(self.input_file).columns)
-        if not input_file_header == self.EXPECTED_INPUT_FILE_HEADER:
+        input_file_header = pd.read_csv(self.input_file, encoding='utf-8-sig')
+        input_file_columns = input_file_header.columns.tolist()
+        if not input_file_columns == self.EXPECTED_INPUT_FILE_COLUMNS:
             raise Exception('Input does not contain the correct columns')
 
     def _overwrite_uniform_sample_currently_in_s3(self):
