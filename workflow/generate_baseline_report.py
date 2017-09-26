@@ -5,7 +5,7 @@ import subprocess
 
 from git import Repo
 from asapp.common import config
-from workflow.evaluate_model import run as evaluate_model
+from workflow.evaluate_model import EvaluateModel
 
 from workflow.paths import *
 
@@ -15,6 +15,7 @@ class GenerateBaselineReport:
         self._config = config['metrics']['metric'][0]
         self._baseline = self._config['baseline']
         self._releases = self._config['releases']
+
 
     def checkout_model_repos(self, release):
         gasapp = Repo(ASAPP_SRS_ROOT)
@@ -38,6 +39,7 @@ class GenerateBaselineReport:
 
     def run(self):
         try:
+            evaluater = EvaluateModel(self._baseline)
             for release in self._releases:
                 print("-- checkout repos --")
                 self.checkout_model_repos(release)
@@ -47,7 +49,7 @@ class GenerateBaselineReport:
                 subprocess.call([script, release, self._baseline])
 
                 print("-- evaluate model --")
-                evaluate_model(release, self._baseline)
+                evaluater.run(release)
         except Exception as e:
             print("ERROR encountered: ", e)
 
