@@ -15,7 +15,62 @@ from asapp.common import config
 
 from paths import *
 
-def parse_args(args):
+
+class ModelServer:
+    def __init__(self, release, baseline, model):
+        self._release = release
+        self._baseline = baseline
+        self._model = model
+
+
+    def get_model_from_s3(self):
+        subprocess.call(['model_stash', '--bucket', 'asapp-models-dev','get', self._model])
+
+
+    def start_server(self, queue):
+        server = subprocess.Popen(['pythona',
+                         ASAPP_SRS_ROOT + '/run_hierserver.py',
+                         '--routing-json', ASAPP_COMCAST_SRS_ROOT + '/routing.json',
+                         '--model-name', self._model,
+                         '--business-logic', ASAPP_COMCAST_SRS_ROOT + '/business_logic',
+                         '-p', '9999',
+                         '-l', 'DEBUG'])
+        queue.put(server)
+
+
+    def query_server(self):
+        uniquekey = self._release + '_' + self._baseline
+        final_file = uniquekey + '_observed.csv'
+        subprocess.run(['pythona',
+                        ASAPP_SRS_ROOT + '/tools/hier_server_query.py',
+                         '--source', 'comcast_baseline',
+                         '--host', 'localhost',
+                         '--protocol', 'http',
+                         '--port', '9999',
+                         final_file])
+
+
+    def run_and_query_server(self):
+        queue = Queue()
+        thread = threading.Thread(target=self.start_server,args=(queue,))
+        thread.start()
+
+        self.query_server()
+        server = queue.get()
+        server.terminate()
+
+
+    def run(self):
+        try:
+            self.get_model_from_s3()
+            self.run_and_query_server()
+        except Exception as e:
+            print("SKIPPING: " + self._release + "_baseline" + self._baseline)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_exception(exc_type, exc_value, exc_traceback)
+
+
+def parse_args():
     aparser = argparse.ArgumentParser(description=__doc__)
     cli.add_logging_to_parser(aparser)
 
@@ -25,55 +80,11 @@ def parse_args(args):
     return aparser.parse_args()
 
 
-def get_model_from_s3(modelname):
-    subprocess.call(['model_stash', '--bucket', 'asapp-models-dev','get', modelname])
-
-def start_server(modelname, queue):
-    server = subprocess.Popen(['pythona',
-                     ASAPP_SRS_ROOT + '/run_hierserver.py',
-                     '--routing-json', ASAPP_COMCAST_SRS_ROOT + '/routing.json',
-                     '--model-name', modelname,
-                     '--business-logic', ASAPP_COMCAST_SRS_ROOT + '/business_logic',
-                     '-p', '9999',
-                     '-l', 'DEBUG'])
-    queue.put(server)
-
-def query_server(uniquekey):
-    final_file = uniquekey + '_observed.csv'
-    subprocess.run(['pythona',
-                    ASAPP_SRS_ROOT + '/tools/hier_server_query.py',
-                     '--source', 'comcast_baseline',
-                     '--host', 'localhost',
-                     '--protocol', 'http',
-                     '--port', '9999',
-                     final_file])
-
-
-def run_and_query_server(modelname, release, baseline):
-    queue = Queue()
-    thread = threading.Thread(target=start_server,args=(modelname,queue))
-    thread.start()
-    uniquekey = release + '_' + baseline
-    query_server(uniquekey)
-    server = queue.get()
-    server.terminate()
-
-def run(args):
-    parsed_args = parse_args(args)
+if __name__ == '__main__':
+    parsed_args = parse_args()
     release = parsed_args.RELEASE
     baseline = parsed_args.BASELINE
     model = 'ccSklearnLogitEnsemble'
 
-    try:
-        get_model_from_s3(model)
-        run_and_query_server(model, release, baseline)
-
-    except Exception as e:
-        print("SKIPPING: " + release + "_baseline" + baseline)
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_exception(exc_type, exc_value, exc_traceback)
-
-
-
-if __name__ == '__main__':
-    sys.exit(run(sys.argv[1:]))
+    model_server = ModelServer(release, baseline, model)
+    sys.exit(model_server.run())

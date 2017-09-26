@@ -7,58 +7,54 @@ from asapp.common import config
 
 from workflow.paths import *
 
-def parse_args(args):
-    aparser = argparse.ArgumentParser(description=__doc__)
-    cli.add_logging_to_parser(aparser)
+class EvaluateModel:
 
-    aparser.add_argument('RELEASE', default=None, type=str, help='Name of the model release')
-    aparser.add_argument('BASELINE', default=None, type=str, help='Date of the baseline set to use')
+    def __init__(self, baseline):
+        self._baseline = baseline
 
-    return aparser.parse_args()
+    def get_observed_metrics(self, observedfile, level='1*'):
+        process = Popen(['pythona',
+                        '-m', 'asapp.metrics',
+                        '--source', 'comcast_baseline',
+                        '--observed-data', 'local://'+observedfile,
+                        '--business-logic', ASAPP_COMCAST_SRS_ROOT + '/business_logic',
+                        '--metrics', 'acc,prec,recall',
+                        '--filter-classes', 'V,_*',
+                        '--taglevel', level
+                        ],
+                       stdout=PIPE,
+                       stderr=PIPE)
+        output,err = process.communicate()
+        return output
 
+    def write_xls(self, output, title):
+        # write to file -> later change to excel
+        # write summary
+        #metrics_dir = '/Users/lisa/ASAPPinc/releases/condor/' + baseline + '/'
+        metrics_dir = self._baseline + '/'
+        if not os.path.exists(metrics_dir):
+            os.makedirs(metrics_dir)
 
-def get_observered_metrics(observedfile, level='1*'):
-    process = Popen(['pythona',
-                    '-m', 'asapp.metrics',
-                    '--source', 'comcast_baseline',
-                    '--observed-data', 'local://'+observedfile,
-                    '--business-logic', ASAPP_COMCAST_SRS_ROOT + '/business_logic',
-                    '--metrics', 'acc,prec,recall',
-                    '--filter-classes', 'V,_*',
-                    '--taglevel', level
-                    ],
-                   stdout=PIPE,
-                   stderr=PIPE)
-    output,err = process.communicate()
-    return output
+        file = open(
+            metrics_dir + title + '_metrics.xls',
+            'wb')
+        file.write(output)
+        file.close()
 
-def write_xls(output, baseline, title):
-    # write to file -> later change to excel
-    # write summary
-    #metrics_dir = '/Users/lisa/ASAPPinc/releases/condor/' + baseline + '/'
-    metrics_dir = baseline + '/'
-    if not os.path.exists(metrics_dir):
-        os.makedirs(metrics_dir)
+    def run(self, release):
+        #parsed_args = parse_args(args)
+        #release = parsed_args.RELEASE
+        #baseline = parsed_args.BASELINE
 
-    file = open(
-        metrics_dir + title + '_metrics.xls',
-        'wb')
-    file.write(output)
-    file.close()
+        uniquekey = release + '_' + self._baseline
+        observed = uniquekey + '_observed.csv'
 
-def run(release, baseline):
-    #parsed_args = parse_args(args)
-    #release = parsed_args.RELEASE
-    #baseline = parsed_args.BASELINE
+        print("evaluate taglevel1")
+        output = self.get_observed_metrics(observed)
+        self.write_xls(output, uniquekey)
 
-    uniquekey = release + '_' + baseline
-    observed = uniquekey + '_observed.csv'
+        #print("evaluate taglevel4")
+        #output_4level = get_observered_metrics(observed, '4*')
+        #write_xls(output_4level, baseline, uniquekey + '_taglevel4')
 
-    print("evaluate taglevel1")
-    output = get_observered_metrics(observed)
-    write_xls(output, baseline, uniquekey)
-
-    print("evaluate taglevel4")
-    output_4level = get_observered_metrics(observed, '4*')
-    write_xls(output_4level, baseline, uniquekey + '_taglevel4')
 
