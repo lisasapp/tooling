@@ -33,6 +33,7 @@ class ProcessTagsThatClientReturns:
     def _run_steps(self):
         self._overwrite_uniform_sample_currently_in_s3()
         self._locally_update_corpora_tags()
+        self._run_corpus_updater()
 
     def _validate_input(self):
         input_file_header = pd.read_csv(self.input_file, encoding='utf-8-sig')
@@ -56,4 +57,10 @@ class ProcessTagsThatClientReturns:
             'comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb',
             '--output-dir', 'retag',
             '--retag'
+        ])
+
+    def _run_corpus_updater(self):
+        subprocess.run([
+            'corpus_updater',
+            os.path.join(self._output_directory, 'retag')
         ])
