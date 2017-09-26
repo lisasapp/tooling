@@ -1,18 +1,11 @@
 #!/usr/bin/env pythona
 import argparse
-import os
-import shutil
 import sys
 import subprocess
 import threading
-import signal
 from queue import Queue
-
 import traceback
-
 from asapp.common import log, cli
-from asapp.common import config
-
 from paths import *
 
 

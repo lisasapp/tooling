@@ -1,10 +1,5 @@
-import argparse
 import os
-
 from subprocess import Popen, PIPE
-from asapp.common import cli
-from asapp.common import config
-
 from workflow.paths import *
 
 class EvaluateModel:

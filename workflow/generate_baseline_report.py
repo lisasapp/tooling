@@ -2,11 +2,8 @@
 import os
 import shutil
 import subprocess
-
 from git import Repo
-from asapp.common import config
 from workflow.evaluate_model import EvaluateModel
-
 from workflow.paths import *
 
 class GenerateBaselineReport:
