@@ -1,4 +1,6 @@
-import os, subprocess
+import os
+import subprocess
+import sys
 
 from tools import ASAPP_ROOT, ASAPP_MLENG_ROOT
 from tools import CLIENT_FULL_NAMES
@@ -30,6 +32,7 @@ class ProcessTagsThatClientReturns:
 
     def _run_steps(self):
         self._overwrite_uniform_sample_currently_in_s3()
+        self._locally_update_corpora_tags()
 
     def _validate_input(self):
         input_file_header = pd.read_csv(self.input_file, encoding='utf-8-sig')
@@ -40,7 +43,17 @@ class ProcessTagsThatClientReturns:
     def _overwrite_uniform_sample_currently_in_s3(self):
         subprocess.run([
             'corpora', 'push_update',
-            '--filepath', os.path.join(self._output_directory, f'{self._client}-tagsource{self._start_date}.csv'),
+            '--filepath', self.input_file,
             '--bucket', 'asapp-corpora-tagging',
             'condorsrssampling:week{self._start_date}uniform450'
+        ])
+
+    def _locally_update_corpora_tags(self):
+        subprocess.run([
+            sys.executable,
+            os.path.join(ASAPP_MLENG_ROOT, 'tools', 'autotagger.py'),
+            'local://' + self.input_file,
+            'comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb',
+            '--output-dir', 'retag',
+            '--retag'
         ])
