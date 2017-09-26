@@ -17,12 +17,12 @@ class ProcessTagsThatClientReturns:
         self._client = config['client']
         self._start_date = config['start_date']
         self._end_date = config['end_date']
-        self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
+        self._input_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
     @property
     def input_file(self):
         return os.path.join(
-            self._output_directory,
+            self._input_directory,
             f'{CLIENT_FULL_NAMES[self._client]}-tagsource{self._start_date}.csv'
         )
 
@@ -62,5 +62,5 @@ class ProcessTagsThatClientReturns:
     def _run_corpus_updater(self):
         subprocess.run([
             'corpus_updater',
-            os.path.join(self._output_directory, 'retag')
+            os.path.join(self._input_directory, 'retag')
         ])
