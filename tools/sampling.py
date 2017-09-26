@@ -30,10 +30,6 @@ class GenerateUniformSampleForClient(BaseTool):
         self._end_date = config['end_date']
         self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
-    @property
-    def input_file(self):
-        return None
-
     def run(self):
         self._validate_input()
         self._run_steps()
