@@ -1,6 +1,7 @@
 import os, subprocess
 
-from tools import ASAPP_ROOT, ASAPP_MLENG_ROOT, ASAPP_PRODML_ROOT
+from tools import ASAPP_ROOT, ASAPP_MLENG_ROOT
+from tools import CLIENT_FULL_NAMES
 
 import pandas as pd
 
@@ -18,7 +19,10 @@ class ProcessTagsThatClientReturns:
 
     @property
     def input_file(self):
-        return os.path.join(self._output_directory, f'{self._client}-tagsource{self._start_date}.csv')
+        return os.path.join(
+            self._output_directory,
+            f'{CLIENT_FULL_NAMES[self._client]}-tagsource{self._start_date}.csv'
+        )
 
     def run(self):
         self._validate_input()
