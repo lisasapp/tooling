@@ -26,10 +26,6 @@ class ProcessTagsThatClientReturns:
             f'{CLIENT_FULL_NAMES[self._client]}-tagsource{self._start_date}.csv'
         )
 
-    def run(self):
-        self._validate_input()
-        self._run_steps()
-
     def _run_steps(self):
         self._overwrite_uniform_sample_currently_in_s3()
         self._locally_update_corpora_tags()
