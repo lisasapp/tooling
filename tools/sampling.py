@@ -87,7 +87,7 @@ class GenerateUniformSampleForClient(BaseTool):
             'corpora', 'push',
             '--filepath', os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450_auto.csv'),
             '--bucket', 'asapp-corpora-tagging',
-            'condorsrssampling:week{self._start_date}uniform450'
+            f'condorsrssampling:week{self._start_date}uniform450'
         ])
 
     def _print_next_steps(self):
