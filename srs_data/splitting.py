@@ -60,11 +60,7 @@ class SplitProcessedTagsIntoDataCorpora(BaseTool):
         root, extension = os.path.splitext(self.input_file)
         for suffix in ['_0', '_1', '_2']:
             path = root + suffix + extension
-            suffix_replacement = self.SUFFIX_REPLACEMENT_LOOKUP[suffix]
-            new_path = path\
-                         .replace(suffix, suffix_replacement)\
-                         .replace(self._client_full_name, self._data_corpus_name)\
-                         .replace('tagsource', 'week')
+            new_path = self._compose_new_path(path, suffix)
             os.rename(path, new_path)
             self._local_dataset_paths.append(new_path)
 
@@ -75,3 +71,11 @@ class SplitProcessedTagsIntoDataCorpora(BaseTool):
                 '--filepath', path,
                 '--bucket', self._data_corpus_bucket
             ])
+
+    def _compose_new_path(self, path, suffix):
+        suffix_replacement = self.SUFFIX_REPLACEMENT_LOOKUP[suffix]
+        new_path = path\
+                     .replace(suffix, suffix_replacement)\
+                     .replace(self._client_full_name, self._data_corpus_name)\
+                     .replace('tagsource', 'week')
+        return new_path
