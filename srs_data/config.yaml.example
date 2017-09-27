@@ -8,3 +8,5 @@ srs_data:
   sampling:
   tagging:
   splitting:
+    data_corpus_name: ccsrsprod
+    data_corpus_bucket: asapp-corpora
