@@ -4,6 +4,6 @@
 start_date: '20170910'
 end_date: '20170917'
 client: 'condor'
-tools:
+srs_data:
   sampling:
   tagging:

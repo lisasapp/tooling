@@ -2,20 +2,22 @@ import os
 import subprocess
 import sys
 
-from tools import ASAPP_ROOT, ASAPP_MLENG_ROOT
-from tools import CLIENT_FULL_NAMES
+from srs_data import ASAPP_ROOT, ASAPP_MLENG_ROOT
+from srs_data import CLIENT_FULL_NAMES
+from srs_data.base import BaseTool
 
 import pandas as pd
 
 
-class ProcessTagsThatClientReturns:
+class ProcessTagsThatClientReturns(BaseTool):
 
     EXPECTED_INPUT_FILE_COLUMNS = ['text', 'tag', 'notes']
 
     def __init__(self, config):
-        self._config = config['tools']['tagging']
+        self._config = config['srs_data']['tagging']
         self._client = config['client']
         self._start_date = config['start_date']
+        self._start_date = '20170903'
         self._end_date = config['end_date']
         self._input_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
@@ -42,13 +44,13 @@ class ProcessTagsThatClientReturns:
             'corpora', 'push_update',
             '--filepath', self.input_file,
             '--bucket', 'asapp-corpora-tagging',
-            'condorsrssampling:week{self._start_date}uniform450'
+            f'condorsrssampling:week{self._start_date}uniform450'
         ])
 
     def _locally_update_corpora_tags(self):
         subprocess.run([
             sys.executable,
-            os.path.join(ASAPP_MLENG_ROOT, 'tools', 'autotagger.py'),
+            os.path.join(ASAPP_MLENG_ROOT, 'srs_data', 'autotagger.py'),
             'local://' + self.input_file,
             'comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb',
             '--output-dir', 'retag',
