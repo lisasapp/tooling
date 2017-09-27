@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess
 from git import Repo
-from workflow.evaluate_model import EvaluateModel
+from srs_data.evaluate_model import EvaluateModel
 from srs_data.constants import *
 
 class GenerateBaselineReport:
