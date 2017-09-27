@@ -2,8 +2,8 @@ import os
 import subprocess
 import sys
 
-from srs_data import ASAPP_ROOT, ASAPP_MLENG_ROOT, ASAPP_PRODML_ROOT
-from srs_data import CLIENT_FULL_NAMES
+from srs_data.constants import ASAPP_ROOT, ASAPP_MLENG_ROOT, ASAPP_PRODML_ROOT
+from srs_data.constants import CLIENT_FULL_NAMES
 from srs_data.base import BaseTool
 
 
@@ -31,10 +31,10 @@ class GenerateUniformSampleForClient(BaseTool):
         self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
     def _run_steps(self):
-        # self._sample_production_logs()
-        # self._take_uniform_sample()
-        # self._autotag_uniform_sample()
-        # self._push_uniform_sample_to_s3()
+        self._sample_production_logs()
+        self._take_uniform_sample()
+        self._autotag_uniform_sample()
+        self._push_uniform_sample_to_s3()
         self._print_next_steps()
 
     def _validate_input(self):

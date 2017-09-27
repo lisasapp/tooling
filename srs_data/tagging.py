@@ -2,8 +2,8 @@ import os
 import subprocess
 import sys
 
-from srs_data import ASAPP_ROOT, ASAPP_MLENG_ROOT
-from srs_data import CLIENT_FULL_NAMES
+from srs_data.constants import ASAPP_ROOT, ASAPP_MLENG_ROOT
+from srs_data.constants import CLIENT_FULL_NAMES
 from srs_data.base import BaseTool
 
 import pandas as pd
