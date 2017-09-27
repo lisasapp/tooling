@@ -11,6 +11,24 @@ import pandas as pd
 
 class ProcessTagsThatClientReturns(BaseTool):
 
+    """
+    Before running this class, the client's changes to tags must be
+    incorporated manually into the uniform tag sample, then saved locally.
+    These steps are enumerated in the README under the
+    `ProcessTagsThatClientReturns` sub-header.
+
+    With the updated uniform sample, this class performs three steps:
+    1. Overwrites the uniform sample that was placed in S3 by
+    `GenerateUniformSampleForClient._push_uniform_sample_to_s3`.
+    2. Prepare to update tags to existing corpora. For instance, these corpora
+    might be: `comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb`.
+    "Prepare to update" means that we will generate files that include
+    the proposed tag-updates to be made to the tags in the specified corpora.
+    When this step is finished, these files will be saved locally.
+    3. Apply the proposed tag changes, for real (to the specified corpora,
+    in S3).
+    """
+
     EXPECTED_INPUT_FILE_COLUMNS = ['text', 'tag', 'notes']
 
     def __init__(self, config):
