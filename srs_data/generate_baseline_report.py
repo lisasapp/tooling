@@ -5,11 +5,12 @@ import subprocess
 
 from git import Repo
 
+from srs_data.base import BaseTool
 from srs_data.evaluate_model import EvaluateModel
 from srs_data.constants import *
 
 
-class GenerateBaselineReport:
+class GenerateBaselineReport(BaseTool):
 
     def __init__(self, config):
         self._config = config['metrics']['metric'][0]
