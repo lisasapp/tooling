@@ -26,6 +26,7 @@ class SplitProcessedTagsIntoDataCorpora(BaseTool):
         self._data_corpus_name = self._config['data_corpus_name']
         self._data_corpus_bucket = self._config['data_corpus_bucket']
         self._input_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
+        self._local_dataset_paths = []
 
     @property
     def input_file(self):
@@ -37,6 +38,7 @@ class SplitProcessedTagsIntoDataCorpora(BaseTool):
     def _run_steps(self):
         self._run_corpus_splitter()
         self._rename_local_datasets()
+        self._push_local_datasets_to_s3()
 
     def _validate_input(self):
         input_file_header = pd.read_csv(self.input_file, encoding='utf-8-sig')
@@ -64,3 +66,12 @@ class SplitProcessedTagsIntoDataCorpora(BaseTool):
                          .replace(self._client_full_name, self._data_corpus_name)\
                          .replace('tagsource', 'week')
             os.rename(path, new_path)
+            self._local_dataset_paths.append(new_path)
+
+    def _push_local_datasets_to_s3(self):
+        for path in self._local_dataset_paths:
+            subprocess.run([
+                'corpora', 'push',
+                '--filepath', path,
+                '--bucket', self._data_corpus_bucket
+            ])
