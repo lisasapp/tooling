@@ -5,20 +5,20 @@ import subprocess
 import threading
 from queue import Queue
 import traceback
+
 from asapp.common import log, cli
-from paths import *
+from srs_data.constants import *
 
 
 class ModelServer:
+
     def __init__(self, release, baseline, model):
         self._release = release
         self._baseline = baseline
         self._model = model
 
-
     def get_model_from_s3(self):
         subprocess.call(['model_stash', '--bucket', 'asapp-models-dev','get', self._model])
-
 
     def start_server(self, queue):
         server = subprocess.Popen(['pythona',
@@ -29,7 +29,6 @@ class ModelServer:
                          '-p', '9999',
                          '-l', 'DEBUG'])
         queue.put(server)
-
 
     def query_server(self):
         uniquekey = self._release + '_' + self._baseline
@@ -42,7 +41,6 @@ class ModelServer:
                          '--port', '9999',
                          final_file])
 
-
     def run_and_query_server(self):
         queue = Queue()
         thread = threading.Thread(target=self.start_server,args=(queue,))
@@ -51,7 +49,6 @@ class ModelServer:
         self.query_server()
         server = queue.get()
         server.terminate()
-
 
     def run(self):
         try:

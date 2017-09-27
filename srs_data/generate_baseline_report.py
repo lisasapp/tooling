@@ -2,9 +2,12 @@
 import os
 import shutil
 import subprocess
+
 from git import Repo
+
 from srs_data.evaluate_model import EvaluateModel
 from srs_data.constants import *
+
 
 class GenerateBaselineReport:
 
@@ -12,7 +15,6 @@ class GenerateBaselineReport:
         self._config = config['metrics']['metric'][0]
         self._baseline = self._config['baseline']
         self._releases = self._config['releases']
-
 
     def checkout_model_repos(self, release):
         gasapp = Repo(ASAPP_SRS_ROOT)
@@ -27,12 +29,11 @@ class GenerateBaselineReport:
         gcomcast = Repo(ASAPP_COMCAST_SRS_ROOT)
         gcomcast.git.checkout(release)
 
-        # get the business
-        temp_dir =  ASAPP_ROOT + '/business_logic/'
+        # Copy business logic into correct directory
+        temp_dir = ASAPP_ROOT + '/business_logic/'
         business_destination = temp_dir + release
         if not os.path.exists(business_destination):
             shutil.copytree(temp_dir, business_destination)
-
 
     def run(self):
         try:

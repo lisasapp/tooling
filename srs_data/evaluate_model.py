@@ -2,6 +2,7 @@ import os
 from subprocess import Popen, PIPE
 from srs_data.constants import *
 
+
 class EvaluateModel:
 
     def __init__(self, baseline):
@@ -19,7 +20,7 @@ class EvaluateModel:
                         ],
                        stdout=PIPE,
                        stderr=PIPE)
-        output,err = process.communicate()
+        output, err = process.communicate()
         return output
 
     def write_xls(self, output, title):
@@ -51,5 +52,3 @@ class EvaluateModel:
         #print("evaluate taglevel4")
         #output_4level = get_observered_metrics(observed, '4*')
         #write_xls(output_4level, baseline, uniquekey + '_taglevel4')
-
-
