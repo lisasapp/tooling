@@ -1,7 +1,9 @@
 # This is an example YAML file. To use it (locally), rename this file to
 # "config.yml" and replace the values at will.
 
-sampling:
-  start_date: '20170910'
-  end_date: '20170917'
-  client: 'condor'
+start_date: '20170910'
+end_date: '20170917'
+client: 'condor'
+srs_data:
+  sampling:
+  tagging:
