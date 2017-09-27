@@ -1,5 +1,5 @@
 # srs-data tools
-Tools to automate various SRS-data srs_datas and client-asks.
+Tools to automate various SRS-data workflows and client-asks.
 
 ## `ProcessTagsThatClientReturns`
 Before instantiating this class, we must *manually* perform the following:
