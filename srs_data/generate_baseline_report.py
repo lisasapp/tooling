@@ -15,6 +15,10 @@ class GenerateBaselineReport:
         self._config = config['metrics']['metric'][0]
         self._baseline = self._config['baseline']
         self._releases = self._config['releases']
+        self._download_and_query_model_script = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'download_and_query_model.sh'
+        )
 
     def checkout_model_repos(self, release):
         gasapp = Repo(ASAPP_SRS_ROOT)
@@ -43,8 +47,7 @@ class GenerateBaselineReport:
                 self.checkout_model_repos(release)
 
                 print("-- download and query model --")
-                script = os.path.dirname(os.path.realpath(__file__)) + '/download_and_query_model.sh'
-                subprocess.call([script, release, self._baseline])
+                self._download_and_query_model(release)
 
                 print("-- evaluate model --")
                 evaluater.run(release)
@@ -52,3 +55,10 @@ class GenerateBaselineReport:
             print("ERROR encountered: ", e)
 
         self.checkout_model_repos('master')
+
+    def _download_and_query_model(self, release):
+        subprocess.call([
+            self._download_and_query_model_script,
+            release,
+            self._baseline
+        ])
