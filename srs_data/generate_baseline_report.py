@@ -4,7 +4,7 @@ import shutil
 import subprocess
 from git import Repo
 from workflow.evaluate_model import EvaluateModel
-from workflow.paths import *
+from srs_data.constants import *
 
 class GenerateBaselineReport:
 

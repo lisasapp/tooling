@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-from workflow.paths import *
+from srs_data.constants import *
 
 class GenerateUniformSampleForClient:
 

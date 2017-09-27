@@ -1,6 +1,6 @@
 import os
 from subprocess import Popen, PIPE
-from workflow.paths import *
+from srs_data.constants import *
 
 class EvaluateModel:
 
