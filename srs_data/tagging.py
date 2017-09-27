@@ -67,7 +67,7 @@ class ProcessTagsThatClientReturns(BaseTool):
     def _locally_update_corpora_tags(self):
         subprocess.run([
             sys.executable,
-            os.path.join(ASAPP_MLENG_ROOT, 'srs_data', 'autotagger.py'),
+            os.path.join(ASAPP_MLENG_ROOT, 'tools', 'autotagger.py'),
             'local://' + self.input_file,
             'comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb',
             '--output-dir', 'retag',
