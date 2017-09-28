@@ -1,7 +1,12 @@
 # This is an example YAML file. To use it (locally), rename this file to
-# "config.yml" and replace the values at will.
+# "config.yaml" and replace the values at will.
 
-sampling:
-  start_date: '20001231'
-  end_date: '20010106' # typically one week after `start_date`
-  client: 'condor'
+start_date: '20170903'
+end_date: '20170910' # typically one week after start date
+client: 'condor'
+srs_data:
+  sampling:
+  tagging:
+  splitting:
+    data_corpus_name: ccsrsprod
+    data_corpus_bucket: asapp-corpora
