@@ -42,7 +42,6 @@ class ProcessTagsThatClientReturns(BaseTool):
         subprocess.run([
             'corpora', 'push_update',
             '--filepath', self.input_file,
-            '--bucket', 'asapp-corpora-tagging',
             f'condorsrssampling:week{self._start_date}uniform450'
         ])
 
