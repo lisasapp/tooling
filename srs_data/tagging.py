@@ -17,7 +17,6 @@ class ProcessTagsThatClientReturns(BaseTool):
         self._config = config['srs_data']['tagging']
         self._client = config['client']
         self._start_date = config['start_date']
-        self._start_date = '20170903'
         self._end_date = config['end_date']
         self._input_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
 
@@ -43,7 +42,6 @@ class ProcessTagsThatClientReturns(BaseTool):
         subprocess.run([
             'corpora', 'push_update',
             '--filepath', self.input_file,
-            '--bucket', 'asapp-corpora-tagging',
             f'condorsrssampling:week{self._start_date}uniform450'
         ])
 
