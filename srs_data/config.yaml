@@ -1,3 +1,6 @@
+# This is an example YAML file. To use it (locally), rename this file to
+# "config.yml" and replace the values at will.
+
 client: condor
 sampling:
   start_date: 20001231

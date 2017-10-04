@@ -1,10 +1,10 @@
 # This is an example YAML file. To use it (locally), rename this file to
 # "config.yml" and replace the values at will.
 
-client: condor
+client: 'condor'
 sampling:
-  start_date: 20001231
-  end_date: 20010106
+  start_date: '20001231'
+  end_date: '20010106' # typically one week after `start_date`
 metrics:
   metric:
     baseline: '20171003'
@@ -27,3 +27,4 @@ metrics:
       - ComcastSRS-2.19.0
   output_dir: /Users/lisa/ASAPPinc/reports/condor
 report:
+
