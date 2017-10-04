@@ -1,7 +1,31 @@
 # This is an example YAML file. To use it (locally), rename this file to
 # "config.yml" and replace the values at will.
 
+client: 'condor'
 sampling:
   start_date: '20001231'
   end_date: '20010106' # typically one week after `start_date`
-  client: 'condor'
+tagging:
+metrics:
+  metric:
+    baseline: '20171003'
+    evaluation:
+    - taglevel: 1*
+      releases:
+      - ComcastSRS-2.19.0
+      - ComcastSRS-2.18.0
+      - ComcastSRS-2.17.0
+      - ComcastSRS-2.16.8
+      - ComcastSRS-2.15.0
+      - ComcastSRS-2.14.1
+      - ComcastSRS-2.9.2
+      - ComcastSRS-2.8.3
+      - ComcastSRS-2.7.5
+      - ComcastSRS-2.6.4
+      - ComcastSRS-2.6.4
+    - taglevel: 4*
+      releases:
+      - ComcastSRS-2.19.0
+  output_dir: /Users/lisa/ASAPPinc/reports/condor
+report:
+
