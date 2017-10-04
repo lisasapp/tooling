@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-from workflow.paths import *
+from srs_data_workflow import constants
 
 class GenerateUniformSampleForClient:
 
@@ -25,7 +25,7 @@ class GenerateUniformSampleForClient:
         self._client = self._config['client']
         self._start_date = self._config['start_date']
         self._end_date = self._config['end_date']
-        self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
+        self._output_directory = os.path.join(constants.ASAPP_ROOT, 'data', self._client, self._start_date)
 
     def run(self):
         self._sample_production_logs()
@@ -37,7 +37,7 @@ class GenerateUniformSampleForClient:
     def _sample_production_logs(self):
         subprocess.run([
             sys.executable,
-            os.path.join(ASAPP_PRODML_ROOT, 'workflow', 'harvest_cc_logs.py'),
+            os.path.join(constants.ASAPP_PRODML_ROOT, 'workflow', 'harvest_cc_logs.py'),
             '--dt_from', self._start_date + 'T0:0:0',
             '--dt_to', self._end_date + 'T0:0:0',
             '--output', os.path.join(self._output_directory, 'full-sample.csv'),
@@ -47,7 +47,7 @@ class GenerateUniformSampleForClient:
     def _take_uniform_sample(self):
         subprocess.run([
             sys.executable,
-            os.path.join(ASAPP_PRODML_ROOT, 'workflow', 'hier_sample_logs.py'),
+            os.path.join(constants.ASAPP_PRODML_ROOT, 'workflow', 'hier_sample_logs.py'),
             '--consolidate',
             '--sample-size', '450',
             '--custguid-blacklist', 'comcastblacklist:20170804',
@@ -58,7 +58,7 @@ class GenerateUniformSampleForClient:
     def _autotag_uniform_sample(self):
         subprocess.run([
             sys.executable,
-            os.path.join(ASAPP_MLENG_ROOT, 'workflow', 'autotagger.py'),
+            os.path.join(constants.ASAPP_MLENG_ROOT, 'workflow', 'autotagger.py'),
             '--output-dir', self._output_directory,
             'comcast_baseline,comcast_devtest,comcast_training,ccsrsprodweb',
             'local://' + os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')

@@ -4,10 +4,10 @@ import argparse
 from ruamel import yaml
 
 from asapp.common import cli
-from workflow.generate_baseline_report import GenerateBaselineReport
-from workflow.sampling import GenerateUniformSampleForClient
+from srs_data_workflow.generate_baseline_report import GenerateBaselineReport
+from srs_data_workflow.sampling import GenerateUniformSampleForClient
 
-DEFAULT_CONFIG_PATH = 'workflow/default_config.yaml'
+DEFAULT_CONFIG_PATH = 'srs_data_workflow/config.yaml'
 
 
 def get_parser():
