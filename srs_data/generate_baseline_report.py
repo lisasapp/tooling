@@ -4,8 +4,8 @@ from git import Repo
 from srs_data.evaluate_model import EvaluateModel
 from srs_data import constants
 
-class GenerateBaselineReport:
 
+class GenerateBaselineReport:
 
     def __init__(self, config):
         self._config = config['metrics']
@@ -13,9 +13,7 @@ class GenerateBaselineReport:
         self._baseline = self._config['metric']['baseline']
         self._evaluations = self._config['metric']['evaluation']
         self._releases = self._evaluations[0]['releases']
-
         self._current_dir = os.path.dirname(os.path.realpath(__file__))
-
 
     def checkout_model_repos(self, release):
         gasapp = Repo(constants.ASAPP_SRS_ROOT)
@@ -30,11 +28,9 @@ class GenerateBaselineReport:
         gcomcast = Repo(constants.ASAPP_COMCAST_SRS_ROOT)
         gcomcast.git.checkout(release)
 
-
     def download_and_query_model(self, release):
         script =  os.path.join(os.path.dirname(os.path.realpath(__file__)), 'download_and_query_model.sh')
         subprocess.run([script, release, self._baseline])
-
 
     def run(self):
         try:
