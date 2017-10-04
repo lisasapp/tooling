@@ -8,24 +8,28 @@ sampling:
 tagging:
 metrics:
   metric:
-    baseline: '20171003'
+    baseline: '20171004'
     evaluation:
     - taglevel: 1*
       releases:
       - ComcastSRS-2.19.0
-      - ComcastSRS-2.18.0
-      - ComcastSRS-2.17.0
-      - ComcastSRS-2.16.8
+      - ComcastSRS-2.18.1
       - ComcastSRS-2.15.0
-      - ComcastSRS-2.14.1
       - ComcastSRS-2.9.2
-      - ComcastSRS-2.8.3
-      - ComcastSRS-2.7.5
-      - ComcastSRS-2.6.4
       - ComcastSRS-2.6.4
     - taglevel: 4*
       releases:
       - ComcastSRS-2.19.0
   output_dir: /Users/lisa/ASAPPinc/reports/condor
+
+  metric:
+    baseline: '20171004'
+    evaluation:
+    - taglevel: '3'
+      releases:
+      - SprintSRS-2.13.1
+      - SprintSRS-2.12.0
+      - SprintSRS-2.11.0
+  output_dir: /Users/lisa/ASAPPinc/reports/spear
 report:
 

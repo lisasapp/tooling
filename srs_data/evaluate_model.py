@@ -10,18 +10,43 @@ class EvaluateModel:
         self._output_dir = config['output_dir']
 
     def get_observed_metrics(self, key, level='1*'):
+        # Condor
+        #process = Popen(['pythona',
+        #                '-m', 'asapp.metrics',
+        #                '--source', 'comcast_baseline',
+        #                '--observed-data', os.path.join('local://srs_data' , key +'_observed.csv'),
+        #                '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT , 'business_logic'),
+        #                '--metrics', 'cust,acc,prec,recall',
+        #                '--filter-classes', 'V,_*',
+        #                '--taglevel', level
+        #                ],
+        #               stdout=PIPE,
+        #               stderr=PIPE)
+
+        # Spear
         process = Popen(['pythona',
-                        '-m', 'asapp.metrics',
-                        '--source', 'comcast_baseline',
-                        '--observed-data', os.path.join('local://srs_data' , key +'_observed.csv'),
-                        '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT , 'business_logic'),
-                        '--metrics', 'cust,acc,prec,recall',
-                        '--filter-classes', 'V,_*',
-                        '--taglevel', level
-                        ],
-                       stdout=PIPE,
-                       stderr=PIPE)
+                         '-m', 'asapp.metrics',
+                         '--source', 'spear_baseline',
+                         '--observed-data', os.path.join('local://srs_data', key + '_observed.csv'),
+                         '--metrics', 'fscore,prec,recall',
+                         '--blacklist-classes', 'V,O',
+                         '--use-spear-other-transform',
+                         '--taglevel', level
+                         ],
+                        stdout=PIPE,
+                        stderr=PIPE)
+        #process = Popen(['pythona',
+        #                 '-m', 'asapp.metrics',
+        #                 '--source', 'spear_baseline',
+        #                 '--observed-data', os.path.join('local://srs_data', key + '_observed.csv'),
+        #                 '--metrics', 'fscore,prec,recall',
+        #                 '--whitelist-classes', 'AA,AH,BA,BB,BP,BQ',
+        #                 '--taglevel', level
+        #                 ],
+        #                stdout=PIPE,
+        #                stderr=PIPE)
         output,err = process.communicate()
+        print(err)
         return output
 
     def write_xls(self, output, title):

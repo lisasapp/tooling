@@ -9,6 +9,11 @@ import traceback
 from asapp.common import log, cli
 import constants
 
+#CLIENT_DIR = constants.ASAPP_COMCAST_SRS_ROOT
+CLIENT_DIR = constants.ASAPP_SPRINT_SRS_ROOT
+#CLIENT_BASELINE = 'comcast_baseline'
+CLIENT_BASELINE = 'spear_baseline'
+
 
 class ModelServer:
     def __init__(self, release, baseline, model):
@@ -20,13 +25,18 @@ class ModelServer:
         subprocess.call(['model_stash', '--bucket', 'asapp-models-dev','get', self._model])
 
     def start_server(self, queue):
+        #server = subprocess.Popen(['pythona',
+        #                           os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
+        #                           '--routing-json', os.path.join(CLIENT_DIR, 'routing.json'),
+        #                           '--model-name', self._model,
+        #                           '--business-logic', os.path.join(CLIENT_DIR, 'business_logic'),
+        #                           '-p', '9999',
+        #                           '-l', 'DEBUG'])
         server = subprocess.Popen(['pythona',
                          os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
-                         '--routing-json', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT, 'routing.json'),
-                         '--model-name', self._model,
-                         '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT, 'business_logic'),
-                         '-p', '9999',
-                         '-l', 'DEBUG'])
+                         '--known-good', os.path.join(CLIENT_DIR,'knowngood', 'knowngood.yaml'),
+                         '--model-name', self._model])
+
         queue.put(server)
 
     def query_server(self):
@@ -34,7 +44,7 @@ class ModelServer:
         final_file = uniquekey + '_observed.csv'
         subprocess.run(['pythona',
                         os.path.join(constants.ASAPP_SRS_ROOT, 'tools', 'hier_server_query.py'),
-                         '--source', 'comcast_baseline',
+                         '--source', CLIENT_BASELINE,
                          '--host', 'localhost',
                          '--protocol', 'http',
                          '--port', '9999',
@@ -73,7 +83,8 @@ if __name__ == '__main__':
     parsed_args = parse_args()
     release = parsed_args.RELEASE
     baseline = parsed_args.BASELINE
-    model = 'ccSklearnLogitEnsemble'
+    #model = 'ccSklearnLogitEnsemble'
+    model = 'boostLogitW2VT300Prod'
 
     model_server = ModelServer(release, baseline, model)
     sys.exit(model_server.run())

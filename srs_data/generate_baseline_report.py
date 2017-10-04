@@ -25,7 +25,8 @@ class GenerateBaselineReport:
         gmleng = Repo(constants.ASAPP_MLENG_ROOT)
         gmleng.git.checkout(release)
 
-        gcomcast = Repo(constants.ASAPP_COMCAST_SRS_ROOT)
+        #gcomcast = Repo(constants.ASAPP_COMCAST_SRS_ROOT)
+        gcomcast = Repo(constants.ASAPP_SPRINT_SRS_ROOT)
         gcomcast.git.checkout(release)
 
     def download_and_query_model(self, release):
