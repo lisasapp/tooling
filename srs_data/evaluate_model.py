@@ -1,6 +1,6 @@
 import os
 from subprocess import Popen, PIPE
-from srs_data_workflow import constants
+from srs_data import constants
 
 class EvaluateModel:
 
@@ -13,8 +13,8 @@ class EvaluateModel:
         process = Popen(['pythona',
                         '-m', 'asapp.metrics',
                         '--source', 'comcast_baseline',
-                        '--observed-data', 'local://srs_data_workflow/'+ key +'_observed.csv',
-                        '--business-logic', constants.ASAPP_COMCAST_SRS_ROOT + '/business_logic',
+                        '--observed-data', os.path.join('local://srs_data' , key +'_observed.csv'),
+                        '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT , 'business_logic'),
                         '--metrics', 'cust,acc,prec,recall',
                         '--filter-classes', 'V,_*',
                         '--taglevel', level
@@ -27,12 +27,12 @@ class EvaluateModel:
 
     def write_xls(self, output, title):
         # write to file -> later change to excel
-        metrics_dir = self._output_dir + '/' + self._baseline + '/'
+        metrics_dir = os.path.join(self._output_dir, self._baseline)
         if not os.path.exists(metrics_dir):
             os.makedirs(metrics_dir)
 
         file = open(
-            metrics_dir + title + '_metrics.xls',
+            os.path.join(metrics_dir, title + '_metrics.xls'),
             'wb')
         file.write(output)
         file.close()

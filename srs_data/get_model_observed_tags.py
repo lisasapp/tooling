@@ -9,7 +9,6 @@ import traceback
 from asapp.common import log, cli
 import constants
 
-
 class ModelServer:
     def __init__(self, release, baseline, model):
         self._release = release
@@ -20,13 +19,13 @@ class ModelServer:
     def get_model_from_s3(self):
         subprocess.call(['model_stash', '--bucket', 'asapp-models-dev','get', self._model])
 
-    os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py')
+
     def start_server(self, queue):
         server = subprocess.Popen(['pythona',
-                         constants.ASAPP_SRS_ROOT + '/run_hierserver.py',
-                         '--routing-json', constants.ASAPP_COMCAST_SRS_ROOT + '/routing.json',
+                         os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
+                         '--routing-json', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT, 'routing.json'),
                          '--model-name', self._model,
-                         '--business-logic', constants.ASAPP_COMCAST_SRS_ROOT + '/business_logic',
+                         '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT, 'business_logic'),
                          '-p', '9999',
                          '-l', 'DEBUG'])
         queue.put(server)
@@ -36,7 +35,7 @@ class ModelServer:
         uniquekey = self._release + '_' + self._baseline
         final_file = uniquekey + '_observed.csv'
         subprocess.run(['pythona',
-                        constants.ASAPP_SRS_ROOT + '/tools/hier_server_query.py',
+                        os.path.join(constants.ASAPP_SRS_ROOT, 'tools', 'hier_server_query.py'),
                          '--source', 'comcast_baseline',
                          '--host', 'localhost',
                          '--protocol', 'http',

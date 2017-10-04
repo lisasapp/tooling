@@ -1,8 +1,8 @@
 import os
 import subprocess
 from git import Repo
-from srs_data_workflow.evaluate_model import EvaluateModel
-from srs_data_workflow import constants
+from srs_data.evaluate_model import EvaluateModel
+from srs_data import constants
 
 class GenerateBaselineReport:
 

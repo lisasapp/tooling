@@ -1,7 +1,7 @@
 # tooling
 
 To go through the sampling/tagging/training/deployment workflow, run:
-`pythona -m workflow`
+`pythona -m srs_data`
 
 Modify the following file based on needs:
 config.yaml
