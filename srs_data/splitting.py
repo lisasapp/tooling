@@ -3,7 +3,6 @@ import subprocess
 import sys
 
 from constants import ASAPP_ROOT, ASAPP_MLENG_ROOT
-from constants import CLIENT_FULL_NAMES
 from base import BaseTool
 
 import pandas as pd
@@ -11,34 +10,53 @@ import pandas as pd
 
 class SplitProcessedTagsIntoDataCorpora(BaseTool):
 
-    EXPECTED_INPUT_FILE_COLUMNS = ['text', 'tag', 'notes']
-    SUFFIX_REPLACEMENT_LOOKUP = {
-        '_0': 'a',
-        '_1': 'b',
-        '_2': 'c'
-    }
+    EXPECTED_INPUT_FILE_COLUMNS = [
+        'tag',
+        'related_intent',
+        'observed',
+        'weight',
+        'text',
+        'history',
+        'notes',
+        'cust_guid',
+        'md5',
+        'model',
+        'platform',
+        'requesttype',
+        'routed',
+        'subtags',
+        'tagsource',
+        'timestamp',
+        '_source',
+    ]
+    CORPORA_SPEC_SUFFIXES_FOR_SPLITS = ['a', 'b', 'c']
 
     def __init__(self, config):
-        self._config = config['srs_data']['splitting']
+        self._config = config['splitting']
         self._client = config['client']
-        self._client_full_name = f'{CLIENT_FULL_NAMES[self._client]}'
         self._start_date = config['start_date']
         self._data_corpus_name = self._config['data_corpus_name']
         self._data_corpus_bucket = self._config['data_corpus_bucket']
         self._input_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
-        self._local_dataset_paths = []
 
     @property
     def input_file(self):
         return os.path.join(
             self._input_directory,
-            f'{CLIENT_FULL_NAMES[self._client]}-tagsource{self._start_date}.csv'
+            # "_auto" is intentionally there twice. we should change
+            # these paths soon, because they are confusing.
+            f'ccsrsprod-week{self._start_date}uniform-450_auto_auto.csv'
         )
+
+    @property
+    def split_paths(self):
+        root, extension = os.path.splitext(self.input_file)
+        for suffix in ['_0', '_1', '_2']:
+            yield root + suffix + extension
 
     def _run_steps(self):
         self._run_corpus_splitter()
-        self._rename_local_datasets()
-        self._push_local_datasets_to_s3()
+        self._push_splits_to_s3()
 
     def _validate_input(self):
         input_file_header = pd.read_csv(self.input_file, encoding='utf-8-sig')
@@ -56,26 +74,12 @@ class SplitProcessedTagsIntoDataCorpora(BaseTool):
             'local://' + self.input_file
         ])
 
-    def _rename_local_datasets(self):
-        root, extension = os.path.splitext(self.input_file)
-        for suffix in ['_0', '_1', '_2']:
-            path = root + suffix + extension
-            new_path = self._compose_new_path(path, suffix)
-            os.rename(path, new_path)
-            self._local_dataset_paths.append(new_path)
-
-    def _push_local_datasets_to_s3(self):
-        for path in self._local_dataset_paths:
+    def _push_splits_to_s3(self):
+        corpora_base_spec = f'ccsrsprod:week{self.start_date}'
+        for path, suffix in zip(self.split_paths, self.CORPORA_SPEC_SUFFIXES_FOR_SPLITS):
             subprocess.run([
                 'corpora', 'push',
                 '--filepath', path,
-                '--bucket', self._data_corpus_bucket
+                '--bucket', self._data_corpus_bucket,
+                corpora_base_spec + suffix
             ])
-
-    def _compose_new_path(self, path, suffix):
-        suffix_replacement = self.SUFFIX_REPLACEMENT_LOOKUP[suffix]
-        new_path = path\
-                     .replace(suffix, suffix_replacement)\
-                     .replace(self._client_full_name, self._data_corpus_name)\
-                     .replace('tagsource', 'week')
-        return new_path
