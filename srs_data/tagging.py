@@ -5,12 +5,28 @@ import sys
 from srs_data.constants import ASAPP_ROOT, ASAPP_MLENG_ROOT
 from srs_data.constants import CLIENT_FULL_NAMES
 from srs_data.base import BaseTool
-from srs_data.sampling import GenerateBaselineReport
+from srs_data.sampling import GenerateUniformSampleForClient
 
 import pandas as pd
 
 
 class ProcessTagsThatClientReturns(BaseTool):
+
+    """
+    Before running this class, the client's changes to tags must be
+    incorporated manually into the uniform tag sample, then saved locally.
+    These steps are enumerated in the README under the
+    `ProcessTagsThatClientReturns` sub-header.
+
+    With the updated uniform sample, this class performs three steps:
+    1. Prepare tag updates to original uniform sample based on the updated
+    uniform sample (the file returned from client, in the case of Condor).
+    2. Apply prepared tag updates to the uniform sample file (which lives
+    in S3, as per `GenerateUniformSampleForClient._push_uniform_sample_to_s3`).
+    3. Prepare tag updates to virtual corpora. For Condor, these corpora
+    include: `comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb`.
+    4. Apply prepared tag updates to virtual corpora (which live in S3).
+    """
 
     EXPECTED_INPUT_FILE_COLUMNS = ['text', 'tag', 'notes']
 
@@ -18,12 +34,8 @@ class ProcessTagsThatClientReturns(BaseTool):
         self._config = config['tagging']
         self._client = config['client']
         self._start_date = config['start_date']
-        self._start_date = '20170903'
         self._end_date = config['end_date']
         self._input_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
-        # this is bad. this will become more natural when we start making
-        # dependencies between classes explicit.
-        self._autotagged_uniform_sample_file = GenerateBaselineReport(config).autotagged_uniform_sample_file
 
     @property
     def input_file(self):
@@ -34,17 +46,22 @@ class ProcessTagsThatClientReturns(BaseTool):
 
     @property
     def uniform_sample_file(self):
-        return self._autotagged_uniform_sample_file
+        return f'ccsrsprod-week{self._start_date}uniform-450.csv'
+
+    @property
+    def uniform_sample_file_corpora_spec(self):
+        return f'condorsrssampling:week{self._start_date}uniform450'
 
     @property
     def uniform_sample_file_updated_with_client_tags(self):
         return self.uniform_sample_file.replace('.csv', '_auto.csv')
 
     def _run_steps(self):
-        self._update_the_original_uniform_sample()
-        self._overwrite_uniform_sample_currently_in_s3()
-        self._locally_update_corpora_tags()
-        self._run_corpus_updater()
+        self._prepare_tag_updates_to_original_uniform_sample()
+        self._update_uniform_sample_in_s3()
+
+        self._prepare_tag_updates_to_virtual_corpora()
+        self._update_virtual_corpora_in_s3()
 
     def _validate_input(self):
         input_file_header = pd.read_csv(self.input_file, encoding='utf-8-sig')
@@ -52,36 +69,36 @@ class ProcessTagsThatClientReturns(BaseTool):
         if not input_file_columns == self.EXPECTED_INPUT_FILE_COLUMNS:
             raise Exception('Input does not contain the correct columns')
 
-    def _update_the_original_uniform_sample(self):
+    def _prepare_tag_updates_to_original_uniform_sample(self):
         subprocess.run([
             sys.executable,
-            os.path.join(ASAPP_MLENG_ROOT, 'srs_data', 'autotagger.py'),
+            os.path.join(ASAPP_MLENG_ROOT, 'tools', 'autotagger.py'),
             'local://' + self.input_file,
-            'local://' + self.uniform_sample_file,
+            self.uniform_sample_file_corpora_spec,
             '--output-dir', '.',
             '--retag'
         ])
 
-    def _overwrite_uniform_sample_currently_in_s3(self):
+    def _update_uniform_sample_in_s3(self):
         subprocess.run([
             'corpora', 'push_update',
-            '--filepath', self.uniform_sample_file_updated_with_client_tags,
+            '--filepath', 'local://' + self.uniform_sample_file_updated_with_client_tags,
             '--bucket', 'asapp-corpora-tagging',
-            f'condorsrssampling:week{self._start_date}uniform450'
+            self.uniform_sample_file_corpora_spec
         ])
 
-    def _locally_update_corpora_tags(self):
+    def _prepare_tag_updates_to_virtual_corpora(self):
         subprocess.run([
             sys.executable,
-            os.path.join(ASAPP_MLENG_ROOT, 'srs_data', 'autotagger.py'),
-            'local://' + self.uniform_sample_file_updated_with_client_tags,
+            os.path.join(ASAPP_MLENG_ROOT, 'tools', 'autotagger.py'),
+            self.uniform_sample_file_corpora_spec,
             'comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb',
-            '--output-dir', 'corpora_tag_updates',
+            '--output-dir', os.path.join(self._input_directory, 'virtual_corpora_tag_updates'),
             '--retag'
         ])
 
-    def _run_corpus_updater(self):
+    def _update_virtual_corpora_in_s3(self):
         subprocess.run([
             'corpus_updater',
-            os.path.join(self._input_directory, 'corpora_tag_updates')
+            os.path.join(self._input_directory, 'virtual_corpora_tag_updates')
         ])

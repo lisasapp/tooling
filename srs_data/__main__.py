@@ -4,8 +4,9 @@ import argparse
 from ruamel import yaml
 
 from asapp.common import cli
-from srs_data.generate_baseline_report import GenerateBaselineReport
 from srs_data.sampling import GenerateUniformSampleForClient
+from srs_data.tagging import ProcessTagsThatClientReturns
+from srs_data.generate_baseline_report import GenerateBaselineReport
 
 DEFAULT_CONFIG_PATH = 'srs_data/config.yaml'
 
@@ -25,8 +26,9 @@ def run():
     parsed_args = get_parser().parse_args()
     config = parse_config(parsed_args.CONFIG_FILE)
 
-    #GenerateUniformSampleForClient(config).run()
-    GenerateBaselineReport(config).run()
+    # GenerateUniformSampleForClient(config).run()
+    ProcessTagsThatClientReturns(config).run()
+    # GenerateBaselineReport(config).run()
 
 
 if __name__ == '__main__':

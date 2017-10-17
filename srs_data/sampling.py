@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-from srs_data import constants
+from srs_data.constants import ASAPP_ROOT, ASAPP_PRODML_ROOT, ASAPP_MLENG_ROOT
 from srs_data.base import BaseTool
 
 
@@ -82,6 +82,7 @@ class GenerateUniformSampleForClient(BaseTool):
         ])
 
     def _push_uniform_sample_to_s3(self):
+        # you need to specify a corpus here. for spear, it should be spearsrstagging!
         subprocess.run([
             'corpora', 'push',
             '--filepath', self.autotagged_uniform_sample_file,
