@@ -16,7 +16,7 @@ class EvaluateModel:
                         '--observed-data', os.path.join('local://srs_data' , key +'_observed.csv'),
                         '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT , 'business_logic'),
                         '--metrics', 'cust,acc,prec,recall',
-                        '--filter-classes', 'V,_*',
+                        '--blacklist-classes', 'V,_*',
                         '--taglevel', level
                         ],
                        stdout=PIPE,
