@@ -2,8 +2,9 @@ import os
 import subprocess
 import sys
 
-from srs_data import constants
+from srs_data.constants import ASAPP_ROOT, ASAPP_PRODML_ROOT, ASAPP_MLENG_ROOT
 from srs_data.base import BaseTool
+
 
 class GenerateUniformSampleForClient(BaseTool):
 
@@ -22,11 +23,19 @@ class GenerateUniformSampleForClient(BaseTool):
     """
 
     def __init__(self, config):
-        self._config = config['srs_data']['sampling']
+        self._config = config['sampling']
         self._client = config['client']
         self._start_date = config['start_date']
         self._end_date = config['end_date']
         self._output_directory = os.path.join(ASAPP_ROOT, 'data', self._client, self._start_date)
+
+    @property
+    def uniform_sample_file(self):
+        return os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')
+
+    @property
+    def autotagged_uniform_sample_file(self):
+        return self.uniform_sample_file.replace('.csv', '_auto.csv')
 
     def _run_steps(self):
         self._sample_production_logs()
@@ -60,7 +69,7 @@ class GenerateUniformSampleForClient(BaseTool):
             '--sample-size', '450',
             '--custguid-blacklist', 'comcastblacklist:20170804',
             'local://' + os.path.join(self._output_directory, 'full-sample.csv'),
-            os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')
+            self.uniform_sample_file
         ])
 
     def _autotag_uniform_sample(self):
@@ -69,13 +78,14 @@ class GenerateUniformSampleForClient(BaseTool):
             os.path.join(ASAPP_MLENG_ROOT, 'srs_data', 'autotagger.py'),
             '--output-dir', self._output_directory,
             'comcast_baseline,comcast_devtest,comcast_training,ccsrsprodweb',
-            'local://' + os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450.csv')
+            'local://' + self.uniform_sample_file
         ])
 
     def _push_uniform_sample_to_s3(self):
+        # you need to specify a corpus here. for spear, it should be spearsrstagging!
         subprocess.run([
             'corpora', 'push',
-            '--filepath', os.path.join(self._output_directory, f'ccsrsprod-week{self._start_date}uniform-450_auto.csv'),
+            '--filepath', self.autotagged_uniform_sample_file,
             '--bucket', 'asapp-corpora-tagging',
             f'condorsrssampling:week{self._start_date}uniform450'
         ])
@@ -84,10 +94,9 @@ class GenerateUniformSampleForClient(BaseTool):
         print(
 f"""
 \nAs a final step, please perform the following:
-    1. Open ccsrsprod-week{self._start_date}uniform-450_auto.csv in Excel.
+    1. Open {self.autotagged_uniform_sample_file} in Excel.
     2. Remove all columns except: `tag`, `observed`, `weight`, `text`.
     3. Save result as {CLIENT_FULL_NAMES[self._client]}{self._start_date}.xslx.
     4. Email this file to {self._client.capitalize()}.
 """
         )
-
