@@ -82,7 +82,6 @@ class GenerateUniformSampleForClient(BaseTool):
                 os.path.join(ASAPP_PRODML_ROOT, 'tools', 'hier_sample_logs.py'),
                 '--consolidate',
                 '--sample-size', self._data_count,
-                '--clean-pii',
                 '--custguid-blacklist', 'comcastblacklist:20170804',
                 'local://' + os.path.join(self._output_directory, 'full-sample.csv'),
                 self.uniform_sample_file
@@ -93,6 +92,7 @@ class GenerateUniformSampleForClient(BaseTool):
                 os.path.join(ASAPP_PRODML_ROOT, 'tools', 'hier_sample_logs.py'),
                 '--consolidate',
                 '--sample-size', self._data_count,
+                '--clean-pii',
                 '--custguid-blacklist', 'spearblacklist:20170822',
                 'local://' + os.path.join(self._output_directory, 'full-sample.csv'),
                 self.uniform_sample_file
