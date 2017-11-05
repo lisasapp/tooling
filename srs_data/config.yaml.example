@@ -7,6 +7,7 @@ end_date: '20010106' # typically one week after `start_date`
 sampling:
   data_count: '1500'
   tagger_count: '2'
+  splits: '3'
 tagging:
 metrics:
   metric:

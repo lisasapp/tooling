@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+from shutil import copyfile
 
 from srs_data.constants import ASAPP_ROOT, ASAPP_PRODML_ROOT, ASAPP_MLENG_ROOT
 from srs_data.base import BaseTool
@@ -49,6 +50,9 @@ class GenerateUniformSampleForClient(BaseTool):
         self._take_uniform_sample()
         self._autotag_uniform_sample()
         self._push_uniform_sample_to_s3()
+        if self._client == 'spear':
+            self._create_tagger_shuffle_files()
+            self._push_tagger_directory_to_s3()
         #self._print_next_steps()
 
     def _validate_input(self):
@@ -121,6 +125,25 @@ class GenerateUniformSampleForClient(BaseTool):
             '--filepath', self.autotagged_uniform_sample_file,
             '--bucket', 'asapp-corpora-tagging',
             f'{self._client}srssampling:week{self._start_date}uniform{self._data_count}'
+        ])
+
+    def _create_tagger_shuffle_files(self):
+        tagging_file = os.path.join(self._output_directory, f'{self._client}srstagging-week{self._start_date}uniform{self._data_count}.csv')
+        copyfile(self.autotagged_uniform_sample_file, tagging_file)
+        subprocess.run([
+            sys.executable,
+            os.path.join(ASAPP_MLENG_ROOT, 'tools', 'corpus_split.py'),
+            '--n-splits', self._config['splits'],
+            '--tagger-shuffle', self._config['tagger_count'],
+            '--output-dir', os.path.join(self._output_directory, 'tagger'),
+            'local://' + tagging_file
+        ])
+
+    def _push_tagger_directory_to_s3(self):
+        subprocess.run([
+            'corpora', 'push',
+            '--directory', os.path.join(self._output_directory, 'tagger/'),
+            '--bucket', 'asapp-corpora-tagging'
         ])
 
     def _print_next_steps(self):
