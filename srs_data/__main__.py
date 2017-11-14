@@ -12,8 +12,7 @@ DEFAULT_CONFIG_PATH = 'srs_data/config.yaml'
 
 
 def get_parser():
-    aparser = argparse.ArgumentParser(description=__doc__)
-    cli.add_logging_to_parser(aparser)
+    aparser = cli.ASAPPArgumentParser(description=__doc__)
     aparser.add_argument('CONFIG_FILE', nargs='?', default=DEFAULT_CONFIG_PATH, type=str, help='Path to the configuration file')
     return aparser
 
@@ -26,8 +25,8 @@ def run():
     parsed_args = get_parser().parse_args()
     config = parse_config(parsed_args.CONFIG_FILE)
 
-    # GenerateUniformSampleForClient(config).run()
-    ProcessTagsThatClientReturns(config).run()
+    GenerateUniformSampleForClient(config).run()
+    #ProcessTagsThatClientReturns(config).run()
     # GenerateBaselineReport(config).run()
 
 
