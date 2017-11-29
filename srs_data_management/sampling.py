@@ -3,8 +3,8 @@ import subprocess
 import sys
 from shutil import copyfile
 
-from srs_data.constants import ASAPP_ROOT, ASAPP_PRODML_ROOT, ASAPP_MLENG_ROOT
-from srs_data.base import BaseTool
+from srs_data_management.constants import ASAPP_ROOT, ASAPP_PRODML_ROOT, ASAPP_MLENG_ROOT
+from srs_data_management.base import BaseTool
 
 
 class GenerateUniformSampleForClient(BaseTool):

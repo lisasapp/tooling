@@ -1,6 +1,6 @@
 import os
 from subprocess import Popen, PIPE
-from srs_data import constants
+from srs_data_management import constants
 
 
 class EvaluateModel:
