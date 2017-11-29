@@ -9,12 +9,6 @@ import traceback
 from asapp.common import log, cli
 import constants
 
-#CLIENT_DIR = constants.ASAPP_COMCAST_SRS_ROOT
-CLIENT_DIR = constants.ASAPP_SPRINT_SRS_ROOT
-#CLIENT_BASELINE = 'comcast_baseline'
-CLIENT_BASELINE = 'spear_baseline'
-
-
 class ModelServer:
     def __init__(self, client, release, baseline):
         self._release = release
@@ -33,24 +27,30 @@ class ModelServer:
         if client == 'condor':
             server = subprocess.Popen(['pythona',
                                        os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
-                                       '--routing-json', os.path.join(CLIENT_DIR, 'routing.json'),
+                                       '--routing-json', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT, 'routing.json'),
                                        '--model-name', self._model,
-                                       '--business-logic', os.path.join(CLIENT_DIR, 'business_logic'),
+                                       '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT, 'business_logic'),
                                        '-p', '9999',
                                        '-l', 'DEBUG'])
         elif client == 'spear':
             server = subprocess.Popen(['pythona',
                              os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
-                             '--known-good', os.path.join(CLIENT_DIR,'knowngood', 'knowngood.yaml'),
+                             '--known-good', os.path.join(constants.ASAPP_SPRINT_SRS_ROOT,'knowngood', 'knowngood.yaml'),
                              '--model-name', self._model])
         queue.put(server)
 
     def query_server(self):
+        client_baseline = ''
+        if self._client == 'condor':
+            client_baseline = 'comcast_baseline'
+        elif self._client == 'spear':
+            client_baseline = 'spear_baseline'
+
         uniquekey = self._release + '_' + self._baseline
         final_file = uniquekey + '_observed.csv'
         subprocess.run(['pythona',
                         os.path.join(constants.ASAPP_SRS_ROOT, 'tools', 'hier_server_query.py'),
-                         '--source', CLIENT_BASELINE,
+                         '--source', client_baseline,
                          '--host', 'localhost',
                          '--protocol', 'http',
                          '--port', '9999',
