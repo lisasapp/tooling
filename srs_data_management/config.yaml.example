@@ -1,10 +1,14 @@
 # This is an example YAML file. To use it (locally), rename this file to
 # "config.yml" and replace the values at will.
 
+# condor
 client: 'condor'
+start_date: '20001231'
+end_date: '20010106' # typically one week after `start_date`
 sampling:
-  start_date: '20001231'
-  end_date: '20010106' # typically one week after `start_date`
+  data_count: '1500'
+  tagger_count: '2'
+  splits: '3'
 tagging:
 metrics:
   metric:
@@ -33,3 +37,11 @@ metrics:
   output_dir: /Users/lisa/ASAPPinc/reports/spear
 report:
 
+# spear
+client: 'spear'
+start_date: '20171105'
+end_date: '20171112' # typically one week after `start_date`
+sampling:
+  data_count: '1200'
+  tagger_count: '2'
+  splits: '3'
