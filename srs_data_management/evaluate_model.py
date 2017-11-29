@@ -22,20 +22,6 @@ class EvaluateModel:
                             '--metrics', 'cust,acc,prec,recall',
                             '--taglevel', level
                           ]
-            #'--blacklist-classes', 'V,_*'
-
-            #process = Popen(['pythona',
-            #                '-m', 'asapp.metrics',
-            #                '--source', 'comcast_baseline',
-            #                '--observed-data', os.path.join('local://srs_data_management' , key +'_observed.csv'),
-            #                '--business-logic', os.path.join(constants.ASAPP_COMCAST_SRS_ROOT , 'business_logic'),
-            #                '--metrics', 'cust,acc,prec,recall',
-            #                '--blacklist-classes', 'V,_*',
-            #                '--taglevel', level
-            #                ],
-            #               stdout=PIPE,
-            #               stderr=PIPE)
-
         elif self._client == 'spear':
             commandline = ['pythona',
                            '-m', 'asapp.metrics',
@@ -50,30 +36,6 @@ class EvaluateModel:
             commandline += ['--blacklist-classes', blacklist]
         elif whitelist:
             commandline += ['--whitelist-classes', whitelist]
-        # '--blacklist-classes', 'V,O',
-        # '--whitelist-classes', 'AA,AH,BA,BB,BP,BQ'
-
-        #process = Popen(['pythona',
-        #                 '-m', 'asapp.metrics',
-        #                 '--source', 'spear_baseline',
-        #                 '--observed-data', os.path.join('local://srs_data_management', key + '_observed.csv'),
-        #                 '--metrics', 'fscore,prec,recall',
-        #                 '--blacklist-classes', 'V,O',
-        #                 '--use-spear-other-transform',
-        #                 '--taglevel', level
-        #                 ],
-        #                stdout=PIPE,
-        #                stderr=PIPE)
-        #process = Popen(['pythona',
-        #                 '-m', 'asapp.metrics',
-        #                 '--source', 'spear_baseline',
-        #                 '--observed-data', os.path.join('local://srs_data_management', key + '_observed.csv'),
-        #                 '--metrics', 'fscore,prec,recall',
-        #                 '--whitelist-classes', 'AA,AH,BA,BB,BP,BQ',
-        #                 '--taglevel', level
-        #                 ],
-        #                stdout=PIPE,
-        #                stderr=PIPE)
         process = Popen(commandline,
                         stdout=PIPE,
                         stderr=PIPE)
@@ -110,7 +72,6 @@ class EvaluateModel:
                                                    level=taglevel,
                                                    blacklist='V,O')
             self.write_xls(all_output, key + '_all_' + taglevel)
-
             # Automated Intents
             auto_output = self.get_observed_metrics(key=key,
                                                     level=taglevel,
