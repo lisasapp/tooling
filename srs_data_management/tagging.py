@@ -2,10 +2,10 @@ import os
 import subprocess
 import sys
 
-from srs_data.constants import ASAPP_ROOT, ASAPP_MLENG_ROOT
-from srs_data.constants import CLIENT_FULL_NAMES
-from srs_data.base import BaseTool
-from srs_data.sampling import GenerateUniformSampleForClient
+from srs_data_management.constants import ASAPP_ROOT, ASAPP_MLENG_ROOT
+from srs_data_management.constants import CLIENT_FULL_NAMES
+from srs_data_management.base import BaseTool
+from srs_data_management.sampling import GenerateUniformSampleForClient
 
 import pandas as pd
 
