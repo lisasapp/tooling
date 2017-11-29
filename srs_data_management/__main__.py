@@ -8,7 +8,7 @@ from srs_data_management.sampling import GenerateUniformSampleForClient
 from srs_data_management.tagging import ProcessTagsThatClientReturns
 from srs_data_management.generate_baseline_report import GenerateBaselineReport
 
-DEFAULT_CONFIG_PATH = 'srs_data/config.yaml'
+DEFAULT_CONFIG_PATH = 'srs_data_management/config.yaml'
 
 
 def get_parser():

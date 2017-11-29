@@ -16,27 +16,33 @@ CLIENT_BASELINE = 'spear_baseline'
 
 
 class ModelServer:
-    def __init__(self, release, baseline, model):
+    def __init__(self, client, release, baseline):
         self._release = release
         self._baseline = baseline
-        self._model = model
+        self._client = client
+
+        if self._client == 'condor':
+            self._model = 'ccSklearnLogitEnsemble'
+        elif self._client == 'spear':
+            self._model = 'boostLogitW2VT300Prod'
 
     def get_model_from_s3(self):
         subprocess.call(['model_stash', '--bucket', 'asapp-models-dev','get', self._model])
 
     def start_server(self, queue):
-        #server = subprocess.Popen(['pythona',
-        #                           os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
-        #                           '--routing-json', os.path.join(CLIENT_DIR, 'routing.json'),
-        #                           '--model-name', self._model,
-        #                           '--business-logic', os.path.join(CLIENT_DIR, 'business_logic'),
-        #                           '-p', '9999',
-        #                           '-l', 'DEBUG'])
-        server = subprocess.Popen(['pythona',
-                         os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
-                         '--known-good', os.path.join(CLIENT_DIR,'knowngood', 'knowngood.yaml'),
-                         '--model-name', self._model])
-
+        if client == 'condor':
+            server = subprocess.Popen(['pythona',
+                                       os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
+                                       '--routing-json', os.path.join(CLIENT_DIR, 'routing.json'),
+                                       '--model-name', self._model,
+                                       '--business-logic', os.path.join(CLIENT_DIR, 'business_logic'),
+                                       '-p', '9999',
+                                       '-l', 'DEBUG'])
+        elif client == 'spear':
+            server = subprocess.Popen(['pythona',
+                             os.path.join(constants.ASAPP_SRS_ROOT, 'run_hierserver.py'),
+                             '--known-good', os.path.join(CLIENT_DIR,'knowngood', 'knowngood.yaml'),
+                             '--model-name', self._model])
         queue.put(server)
 
     def query_server(self):
@@ -73,6 +79,7 @@ def parse_args():
     aparser = argparse.ArgumentParser(description=__doc__)
     cli.add_logging_to_parser(aparser)
 
+    aparser.add_argument('CLIENT', default=None, type=str, help='Name of the client')
     aparser.add_argument('RELEASE', default=None, type=str, help='Name of the model release')
     aparser.add_argument('BASELINE', default=None, type=str, help='Date of the baseline set to use')
 
@@ -81,10 +88,8 @@ def parse_args():
 
 if __name__ == '__main__':
     parsed_args = parse_args()
+    client = parsed_args.CLIENT
     release = parsed_args.RELEASE
     baseline = parsed_args.BASELINE
-    #model = 'ccSklearnLogitEnsemble'
-    model = 'boostLogitW2VT300Prod'
-
-    model_server = ModelServer(release, baseline, model)
+    model_server = ModelServer(client, release, baseline)
     sys.exit(model_server.run())
