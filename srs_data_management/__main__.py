@@ -25,8 +25,8 @@ def run():
     parsed_args = get_parser().parse_args()
     config = parse_config(parsed_args.CONFIG_FILE)
 
-    # GenerateUniformSampleForClient(config).run()
-    ProcessTagsThatClientReturns(config).run()
+    GenerateUniformSampleForClient(config).run()
+    #ProcessTagsThatClientReturns(config).run()
     # GenerateBaselineReport(config).run()
 
 
