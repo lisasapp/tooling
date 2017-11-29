@@ -1,4 +1,4 @@
-# srs-data tools
+# srs-data-management tools
 Tools to automate various SRS-data workflows and client-asks.
 
 ## `ProcessTagsThatClientReturns`

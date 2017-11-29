@@ -4,9 +4,9 @@ import argparse
 from ruamel import yaml
 
 from asapp.common import cli
-from srs_data.sampling import GenerateUniformSampleForClient
-from srs_data.tagging import ProcessTagsThatClientReturns
-from srs_data.generate_baseline_report import GenerateBaselineReport
+from srs_data_management.sampling import GenerateUniformSampleForClient
+from srs_data_management.tagging import ProcessTagsThatClientReturns
+from srs_data_management.generate_baseline_report import GenerateBaselineReport
 
 DEFAULT_CONFIG_PATH = 'srs_data/config.yaml'
 
