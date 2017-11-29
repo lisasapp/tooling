@@ -26,6 +26,14 @@ class ProcessTagsThatClientReturns(BaseTool):
     3. Prepare tag updates to virtual corpora. For Condor, these corpora
     include: `comcast_training,comcast_baseline,comcast_devtest,ccsrsprodweb`.
     4. Apply prepared tag updates to virtual corpora (which live in S3).
+
+    !!! CURRENTLY ONLY WORKS FOR CONDOR
+
+    TODO: GENERALIZE FOR SPEAR
+    python $ASAPP_MLENG_ROOT/tools/autotagger.py local://spearsrsmerging-week20170924.csv spearsrssampling:week20170924uniform1200 --output-dir retag --retag
+    python $ASAPP_MLENG_ROOT/tools/corpus_split.py --n-splits 3 --stratified tag --output-dir uploads local://retag/spearsrssampling-week20170924uniform1200_auto.csv
+    corpora push --directory uploads/ --bucket asapp-corpora-spear
+    code for add_corpus, remove_corpus
     """
 
     EXPECTED_INPUT_FILE_COLUMNS = ['text', 'tag', 'notes']
