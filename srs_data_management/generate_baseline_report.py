@@ -28,7 +28,6 @@ class GenerateBaselineReport:
         gmleng = Repo(constants.ASAPP_MLENG_ROOT)
         gmleng.git.checkout(release)
 
-        gclient = None
         if self._client == 'condor':
             gclient = Repo(constants.ASAPP_COMCAST_SRS_ROOT)
         elif self._client == 'spear':
@@ -41,7 +40,7 @@ class GenerateBaselineReport:
 
     def query_historic_ami(self, release):
         # TODO: query using the historic AMI tool
-        pass
+        raise NotImplementedError
 
     def run(self):
         try:

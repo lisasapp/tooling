@@ -12,7 +12,6 @@ class EvaluateModel:
         self._output_dir = metrics_config['output_dir']
 
     def get_observed_metrics(self, key, level='1*', blacklist=None, whitelist=None):
-        commandline = []
         if self._client == 'condor':
             commandline = ['pythona',
                             '-m', 'asapp.metrics',

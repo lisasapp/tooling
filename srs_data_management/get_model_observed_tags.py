@@ -40,7 +40,6 @@ class ModelServer:
         queue.put(server)
 
     def query_server(self):
-        client_baseline = ''
         if self._client == 'condor':
             client_baseline = 'comcast_baseline'
         elif self._client == 'spear':
