@@ -6,6 +6,7 @@ ASAPP_PRODML_ROOT = config.env_vars['ASAPP_PRODML_ROOT']
 ASAPP_MLENG_ROOT = config.env_vars['ASAPP_MLENG_ROOT']
 ASAPP_SRS_ROOT = config.env_vars['ASAPP_SRS_ROOT']
 ASAPP_COMCAST_SRS_ROOT = config.env_vars['ASAPP_COMCAST_SRS_ROOT']
+ASAPP_SPRINT_SRS_ROOT = config.env_vars['ASAPP_SPRINT_ROOT']
 
 CLIENT_FULL_NAMES = {
     'condor': 'comcast',

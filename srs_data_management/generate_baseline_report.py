@@ -8,10 +8,13 @@ from srs_data_management import constants
 class GenerateBaselineReport:
 
     def __init__(self, config):
-        self._config = config['metrics']
-        # change this later to loop through instead of just indexing first
-        self._baseline = self._config['metric']['baseline']
-        self._evaluations = self._config['metric']['evaluation']
+        self._config = config
+        self._client = config['client']
+
+        metrics_config = config['metrics']
+        self._baseline = metrics_config['metric']['baseline']
+        self._evaluations = metrics_config['metric']['evaluation']
+        # TODO: change this later to loop through taglevel instead of just indexing first
         self._releases = self._evaluations[0]['releases']
         self._current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -25,12 +28,19 @@ class GenerateBaselineReport:
         gmleng = Repo(constants.ASAPP_MLENG_ROOT)
         gmleng.git.checkout(release)
 
-        gcomcast = Repo(constants.ASAPP_COMCAST_SRS_ROOT)
-        gcomcast.git.checkout(release)
+        if self._client == 'condor':
+            gclient = Repo(constants.ASAPP_COMCAST_SRS_ROOT)
+        elif self._client == 'spear':
+            gclient = Repo(constants.ASAPP_SPRINT_SRS_ROOT)
+        gclient.git.checkout(release)
 
     def download_and_query_model(self, release):
         script =  os.path.join(os.path.dirname(os.path.realpath(__file__)), 'download_and_query_model.sh')
-        subprocess.run([script, release, self._baseline])
+        subprocess.run([script, self._client, release, self._baseline])
+
+    def query_historic_ami(self, release):
+        # TODO: query using the historic AMI tool
+        raise NotImplementedError
 
     def run(self):
         try:
@@ -38,9 +48,9 @@ class GenerateBaselineReport:
             for release in self._releases:
                 print("-- checkout repos --")
                 self.checkout_model_repos(release)
-
                 print("-- download and query model --")
                 self.download_and_query_model(release)
+                # TODO: add check for whether historic release is available
 
             self.checkout_model_repos('master')
             for evaluation in self._evaluations:

@@ -8,7 +8,7 @@ from srs_data_management.sampling import GenerateUniformSampleForClient
 from srs_data_management.tagging import ProcessTagsThatClientReturns
 from srs_data_management.generate_baseline_report import GenerateBaselineReport
 
-DEFAULT_CONFIG_PATH = 'srs_data/config.yaml'
+DEFAULT_CONFIG_PATH = 'srs_data_management/config.yaml'
 
 
 def get_parser():
@@ -25,9 +25,9 @@ def run():
     parsed_args = get_parser().parse_args()
     config = parse_config(parsed_args.CONFIG_FILE)
 
-    GenerateUniformSampleForClient(config).run()
-    #ProcessTagsThatClientReturns(config).run()
-    # GenerateBaselineReport(config).run()
+    # GenerateUniformSampleForClient(config).run()
+    # ProcessTagsThatClientReturns(config).run()
+    GenerateBaselineReport(config).run()
 
 
 if __name__ == '__main__':
